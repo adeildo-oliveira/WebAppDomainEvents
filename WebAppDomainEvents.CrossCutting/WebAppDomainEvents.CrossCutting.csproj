@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebAppDomainEvents.Domain\WebAppDomainEvents.Domain.csproj" />
+    <ProjectReference Include="..\WebAppDomainEvents.Infra\WebAppDomainEvents.Infra.csproj" />
+  </ItemGroup>
+
+</Project>
