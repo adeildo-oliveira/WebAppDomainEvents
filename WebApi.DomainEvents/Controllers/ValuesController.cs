@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using WebAppDomainEvents.Domain.Commands.SalarioCommand;
+using WebAppDomainEvents.Domain.Notifications;
 
 namespace WebApi.DomainEvents.Controllers
 {
@@ -7,10 +11,27 @@ namespace WebApi.DomainEvents.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IMediator _mediator;
+        private readonly DomainNotificationHandler _notifications;
+
+        public ValuesController(IMediator mediator, INotificationHandler<DomainNotification> notificationHandler)
+        {
+            _mediator = mediator;
+            _notifications = (DomainNotificationHandler)notificationHandler;
+        }
+
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<ActionResult<IEnumerable<string>>> Get()
         {
+            await _mediator.Send(new AddSalarioCommand { });
+            await _mediator.Send(new EditSalarioCommand { });
+
+            foreach (var item in _notifications.GetNotifications())
+            {
+                var teste = item.Value;
+            }
+
             return new string[] { "value1", "value2" };
         }
 
@@ -38,11 +59,5 @@ namespace WebApi.DomainEvents.Controllers
         public void Delete(int id)
         {
         }
-    }
-
-    public class AddSalarioCommand
-    {
-        public decimal Pagamento { get; set; }
-        public decimal Adiantamento { get; set; }
     }
 }

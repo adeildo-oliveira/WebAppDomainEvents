@@ -7,42 +7,50 @@ using WebAppDomainEvents.Domain.Models;
 namespace WebAppDomainEvents.Domain.Commands.SalarioCommand
 {
     public class SalarioCommandHandler : CommandHandler,
-        INotificationHandler<AddSalarioCommand>, 
-        INotificationHandler<EditSalarioCommand>,
-        INotificationHandler<DeleteSalarioCommand>
+        IRequestHandler<AddSalarioCommand, bool>,
+        IRequestHandler<EditSalarioCommand, bool>,
+        IRequestHandler<DeleteSalarioCommand, bool>
     {
         private readonly ISalarioRepository _salarioRepository;
 
-        public SalarioCommandHandler(IMediator mediator,
-            ISalarioRepository salarioRepository) : base(mediator)
-        {
-            _salarioRepository = salarioRepository;
-        }
+        public SalarioCommandHandler(IMediator mediator, ISalarioRepository salarioRepository) 
+            : base(mediator) => _salarioRepository = salarioRepository;
 
-        public Task Handle(AddSalarioCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(AddSalarioCommand command, CancellationToken cancellationToken)
         {
             if (!command.IsValid())
             {
-                ReturnValidationErrors(command);
-                return Task.CompletedTask;
+                await ReturnValidationErrors(command);
+                return await Task.FromResult(false);
             }
 
-            _salarioRepository.AdicionarSalarioAsync(new Salario(command.Pagamento, command.Adiantamento));
-            return Task.CompletedTask;
+            await _salarioRepository.AdicionarSalarioAsync(new Salario(command.Pagamento, command.Adiantamento));
+            return await Task.FromResult(true);
         }
 
-        public Task Handle(EditSalarioCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(EditSalarioCommand command, CancellationToken cancellationToken)
         {
             if (!command.IsValid())
             {
-                ReturnValidationErrors(command);
-                return Task.CompletedTask;
+                await ReturnValidationErrors(command);
+                return await Task.FromResult(false);
             }
 
-            _salarioRepository.EditarSalarioAsync(new Salario(command.Pagamento, command.Adiantamento));
-            return Task.CompletedTask;
+            await _salarioRepository.EditarSalarioAsync(new Salario(command.Pagamento, command.Adiantamento));
+            return await Task.FromResult(true);
         }
 
-        public Task Handle(DeleteSalarioCommand notification, CancellationToken cancellationToken) => throw new System.NotImplementedException();
+        public async Task<bool> Handle(DeleteSalarioCommand command, CancellationToken cancellationToken)
+        {
+            if (!command.IsValid())
+            {
+                await ReturnValidationErrors(command);
+                return await Task.FromResult(false);
+            }
+
+            var resultado = await _salarioRepository.ObterSalarioPorIdAsync(command.Id);
+            await _salarioRepository.RemoverSalarioAsync(new Salario(resultado.Pagamento, resultado.Adiantamento, command.Status));
+            return await Task.FromResult(true);
+        }
     }
 }

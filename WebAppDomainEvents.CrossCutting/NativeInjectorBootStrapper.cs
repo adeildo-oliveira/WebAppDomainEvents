@@ -1,7 +1,11 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using WebAppDomainEvents.Domain.Commands.SalarioCommand;
+using WebAppDomainEvents.Domain.Interfaces.Repository;
+using WebAppDomainEvents.Domain.Notifications;
 using WebAppDomainEvents.Infra.Context;
+using WebAppDomainEvents.Infra.Repository;
 
 namespace WebAppDomainEvents.CrossCutting
 {
@@ -20,12 +24,18 @@ namespace WebAppDomainEvents.CrossCutting
 
         }
 
-        private static void InfraServices(IServiceCollection services) =>
+        private static void InfraServices(IServiceCollection services)
+        {
             services.AddScoped<DomainEventsContext>();
+            services.AddScoped<ISalarioRepository, SalarioRepository>();
+        }
 
         private static void DomainServices(IServiceCollection services)
         {
-            
+            services.AddScoped<IRequestHandler<AddSalarioCommand, bool>, SalarioCommandHandler>();
+            services.AddScoped<IRequestHandler<EditSalarioCommand, bool>, SalarioCommandHandler>();
+            services.AddScoped<IRequestHandler<DeleteSalarioCommand, bool>, SalarioCommandHandler>();
+            services.AddScoped<INotificationHandler<DomainNotification>, DomainNotificationHandler>();
         }
     }
 }
