@@ -63,7 +63,7 @@ namespace Tests.Unit.Commands
                 .Instanciar();
             commandBuilder.IsValid();
 
-            var salarioRetorno = new Salario(decimal.One, decimal.One, commandBuilder.Status);
+            var salarioRetorno = new Salario(decimal.One, decimal.One);
 
             _mocker.GetMock<IMediator>().Setup(x => x.Publish(It.IsAny<DomainNotification>(), default)).Returns(Task.CompletedTask);
             _mocker.GetMock<ISalarioRepository>().Setup(x => x.ObterSalarioPorIdAsync(commandBuilder.Id)).ReturnsAsync(salarioRetorno);
@@ -72,6 +72,7 @@ namespace Tests.Unit.Commands
                 .Callback<Salario>((salario) =>
                 {
                     salario.Id.Should().NotBeEmpty();
+                    salario.Id.Should().Be(commandBuilder.Id);
                     salario.Pagamento.Should().Be(salarioRetorno.Pagamento);
                     salario.Adiantamento.Should().Be(salarioRetorno.Adiantamento);
                     salario.Status.Should().BeFalse();

@@ -51,25 +51,26 @@ namespace Tests.Unit.Commands
         }
 
         [Fact]
-        public async Task AdicionarSalarioCommand()
+        public async Task EditarSalarioCommand()
         {
             var commandBuilder = new EditSalarioCommandBuilder()
-                .ComId(Guid.NewGuid())
+                .ComId(new Guid("32cd6820-0da5-4c5f-94d1-e73b01f05de2"))
                 .ComPagamento(decimal.One)
                 .ComAdiantamento(decimal.One)
                 .Instanciar();
             commandBuilder.IsValid();
 
+            _mocker.GetMock<IMediator>().Setup(x => x.Publish(It.IsAny<DomainNotification>(), default)).Returns(Task.CompletedTask);
             _mocker.GetMock<ISalarioRepository>().Setup(x => x.EditarSalarioAsync(It.IsAny<Salario>()))
                 .Returns(Task.CompletedTask)
                 .Callback<Salario>((salario) =>
                 {
                     salario.Id.Should().NotBeEmpty();
+                    salario.Id.Should().Be(commandBuilder.Id);
                     salario.Pagamento.Should().Be(commandBuilder.Pagamento);
                     salario.Adiantamento.Should().Be(commandBuilder.Adiantamento);
                     salario.Status.Should().BeTrue();
                 });
-            _mocker.GetMock<IMediator>().Setup(x => x.Publish(It.IsAny<DomainNotification>(), default)).Returns(Task.CompletedTask);
 
             var resultado = await _salarioCommandHandler.Handle(commandBuilder, default);
 

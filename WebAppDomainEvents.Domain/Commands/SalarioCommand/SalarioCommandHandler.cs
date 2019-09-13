@@ -36,7 +36,9 @@ namespace WebAppDomainEvents.Domain.Commands.SalarioCommand
                 return await Task.FromResult(false);
             }
 
-            await _salarioRepository.EditarSalarioAsync(new Salario(command.Pagamento, command.Adiantamento));
+            await _salarioRepository.EditarSalarioAsync(new Salario(command.Pagamento, command.Adiantamento)
+                .AtualizarId(command.Id));
+
             return await Task.FromResult(true);
         }
 
@@ -49,7 +51,11 @@ namespace WebAppDomainEvents.Domain.Commands.SalarioCommand
             }
 
             var resultado = await _salarioRepository.ObterSalarioPorIdAsync(command.Id);
-            await _salarioRepository.RemoverSalarioAsync(new Salario(resultado.Pagamento, resultado.Adiantamento, command.Status));
+
+            await _salarioRepository.RemoverSalarioAsync(new Salario(resultado.Pagamento, resultado.Adiantamento)
+                .AtualizarId(command.Id)
+                .AtualizarStatus(command.Status));
+
             return await Task.FromResult(true);
         }
     }
