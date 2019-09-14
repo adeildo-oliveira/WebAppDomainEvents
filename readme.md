@@ -1,0 +1,1 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/8mj9irj3mxf9fwi1?svg=true)](https://ci.appveyor.com/project/adeildo-oliveira/webappdomainevents)
