@@ -7,9 +7,9 @@ init:
   - cmd: git config --global core.autocrlf true
 before_build:
   - cmd: dotnet --version
-  - cmd: dotnet restore ./ConsoleAppDapper/ConsoleAppDapper.csproj --verbosity m
+  - cmd: dotnet restore ./WebApi.DomainEvents/WebApi.DomainEvents.csproj --verbosity m
 build_script:
-  - cmd: dotnet publish ./ConsoleAppDapper/ConsoleAppDapper.csproj
+  - cmd: dotnet publish ./WebApi.DomainEvents/WebApi.DomainEvents.csproj
 clone_depth: 1
 test_script:
   - cmd: dotnet restore ./Tests.Unit/Tests.Unit.csproj --verbosity m
