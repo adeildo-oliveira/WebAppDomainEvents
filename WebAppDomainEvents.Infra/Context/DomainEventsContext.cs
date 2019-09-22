@@ -1,13 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using WebAppDomainEvents.Domain.Models;
 using WebAppDomainEvents.Infra.EntityConfig;
 
 namespace WebAppDomainEvents.Infra.Context
 {
     public class DomainEventsContext : DbContext
     {
-        public DomainEventsContext() { }
+        public DbSet<Salario> Salario { get; set; }
+        public DbSet<DespesaMensal> DespesaMensai { get; set; }
+
+        public DomainEventsContext()
+        {
+
+        }
 
         public DomainEventsContext(DbContextOptions<DomainEventsContext> options) : base(options) { }
 

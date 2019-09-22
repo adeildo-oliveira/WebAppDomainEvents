@@ -32,8 +32,11 @@ namespace WebAppDomainEvents.Infra.Repository
             await CommitAsync();
         }
 
-        public async Task<Salario> ObterSalarioPorIdAsync(Guid id) => await _context.Set<Salario>().FindAsync(id);
+        public async Task<Salario> ObterSalarioPorIdAsync(Guid id) => await _context.Set<Salario>()
+            .Include(x => x.DespesasMensais).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
-        public async Task<IReadOnlyCollection<Salario>> ObterSalarioAsync() => await _context.Set<Salario>().ToListAsync();
+        public async Task<IReadOnlyCollection<Salario>> ObterSalarioAsync() => await _context.Set<Salario>().AsNoTracking().ToListAsync();
+
+        public void Dispose() => _context.Dispose();
     }
 }

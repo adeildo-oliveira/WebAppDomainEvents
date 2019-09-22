@@ -16,8 +16,6 @@ namespace WebAppDomainEvents.Domain.Commands
             {
                 await _mediator.Publish(new DomainNotification(error.PropertyName, error.ErrorMessage));
             }
-
-            await Task.CompletedTask;
         }
     }
 }

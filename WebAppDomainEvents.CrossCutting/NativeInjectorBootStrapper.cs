@@ -14,14 +14,8 @@ namespace WebAppDomainEvents.CrossCutting
         public static void RegisterServices(IServiceCollection services)
         {
             services.AddMediatR(AppDomain.CurrentDomain.Load("WebApi.DomainEvents"));
-            MapperServices(services);
             DomainServices(services);
             InfraServices(services);
-        }
-
-        private static void MapperServices(IServiceCollection services)
-        {
-
         }
 
         private static void InfraServices(IServiceCollection services)
@@ -32,9 +26,9 @@ namespace WebAppDomainEvents.CrossCutting
 
         private static void DomainServices(IServiceCollection services)
         {
-            services.AddScoped<IRequestHandler<AddSalarioCommand, bool>, SalarioCommandHandler>();
-            services.AddScoped<IRequestHandler<EditSalarioCommand, bool>, SalarioCommandHandler>();
-            services.AddScoped<IRequestHandler<DeleteSalarioCommand, bool>, SalarioCommandHandler>();
+            services.AddScoped<IRequestHandler<AddSalarioCommand, bool>, AddSalarioCommandHandler>();
+            services.AddScoped<IRequestHandler<EditSalarioCommand, bool>, EditSalarioCommandHandler>();
+            services.AddScoped<IRequestHandler<DeleteSalarioCommand, bool>, DeleteSalarioCommandHandler>();
             services.AddScoped<INotificationHandler<DomainNotification>, DomainNotificationHandler>();
         }
     }

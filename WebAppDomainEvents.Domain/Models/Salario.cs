@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace WebAppDomainEvents.Domain.Models
 {
@@ -11,22 +12,31 @@ namespace WebAppDomainEvents.Domain.Models
         {
             Pagamento = pagamento;
             Adiantamento = adiantamento;
+            DespesasMensais = new List<DespesaMensal>();
         }
 
         public decimal Pagamento { get; private set; }
         public decimal Adiantamento { get; private set; }
         public bool Status { get; private set; } = true;
-        public IEnumerable<DespesaMensal> DespesasMensais { get; private set; }
+        public ICollection<DespesaMensal> DespesasMensais { get; private set; }
 
-        public Salario AtualizarId(Guid id)
+        public virtual Salario AtualizarId(Guid id)
         {
             Id = id;
             return this;
         }
 
-        public Salario AtualizarStatus(bool status)
+        public virtual Salario AtualizarStatus(bool status)
         {
             Status = status;
+            return this;
+        }
+
+        public virtual Salario AdicionarDespesaMensal(DespesaMensal despesaMensal)
+        {
+            if(!DespesasMensais.Any(x => x.Id == despesaMensal?.Id))
+                DespesasMensais.Add(despesaMensal);
+
             return this;
         }
     }
