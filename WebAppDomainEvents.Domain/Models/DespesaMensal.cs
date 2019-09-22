@@ -18,6 +18,12 @@ namespace WebAppDomainEvents.Domain.Models
         public decimal Valor { get; private set; }
         public DateTime Data { get; private set; } = DateTime.Now;
         public bool Status { get; private set; }
-        public virtual Salario Salario { get; private set; }
+        public Salario Salario { get; private set; }
+
+        public virtual DespesaMensal AdicionarSalario(Salario salario)
+        {
+            Salario = salario;
+            return this;
+        }
     }
 }

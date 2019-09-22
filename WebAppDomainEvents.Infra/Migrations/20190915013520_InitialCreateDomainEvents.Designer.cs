@@ -10,8 +10,8 @@ using WebAppDomainEvents.Infra.Context;
 namespace WebAppDomainEvents.Infra.Migrations
 {
     [DbContext(typeof(DomainEventsContext))]
-    [Migration("20190830002320_Initial")]
-    partial class Initial
+    [Migration("20190915013520_InitialCreateDomainEvents")]
+    partial class InitialCreateDomainEvents
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

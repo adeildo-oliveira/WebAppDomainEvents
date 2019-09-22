@@ -5,7 +5,7 @@ using WebAppDomainEvents.Domain.Models;
 
 namespace WebAppDomainEvents.Domain.Interfaces.Repository
 {
-    public interface ISalarioRepository
+    public interface ISalarioRepository : IDisposable
     {
         Task AdicionarSalarioAsync(Salario salario);
         Task<Salario> ObterSalarioPorIdAsync(Guid id);

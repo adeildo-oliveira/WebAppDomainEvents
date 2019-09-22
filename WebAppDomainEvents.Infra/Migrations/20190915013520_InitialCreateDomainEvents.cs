@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebAppDomainEvents.Infra.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialCreateDomainEvents : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

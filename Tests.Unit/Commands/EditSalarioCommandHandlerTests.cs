@@ -18,12 +18,12 @@ namespace Tests.Unit.Commands
     public class EditSalarioCommandHandlerTests
     {
         private readonly AutoMocker _mocker;
-        private readonly SalarioCommandHandler _salarioCommandHandler;
+        private readonly EditSalarioCommandHandler _salarioCommandHandler;
 
         public EditSalarioCommandHandlerTests()
         {
             _mocker = new AutoMocker();
-            _salarioCommandHandler = _mocker.CreateInstance<SalarioCommandHandler>();
+            _salarioCommandHandler = _mocker.CreateInstance<EditSalarioCommandHandler>();
         }
 
         [Fact]
