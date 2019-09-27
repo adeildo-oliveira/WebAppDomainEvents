@@ -11,18 +11,22 @@ using Xunit;
 
 namespace Tests.Integration.Commands
 {
-    public class AddSalarioCommandHandlerTests : IntegrationTestFixture
+    public class AddSalarioCommandHandlerTests : IClassFixture<IntegrationTestFixture>
     {
         private readonly IMediator _mediator;
         private readonly ISalarioRepository _salarioRepository;
         private readonly DomainNotificationHandler _notifications;
+        private readonly IntegrationTestFixture _fixture;
+        private readonly CancellationTokenSource source = new CancellationTokenSource();
 
-        public AddSalarioCommandHandlerTests()
+        public AddSalarioCommandHandlerTests(IntegrationTestFixture fixture)
         {
-            _mediator = Service.GetService<IMediator>();
-            _salarioRepository = Service.GetService<ISalarioRepository>();
-            _notifications = (DomainNotificationHandler)Service.GetService<INotificationHandler<DomainNotification>>();
-            Thread.Sleep(1000);
+            Task.Delay(2000, source.Token).Wait();
+            _fixture = fixture;
+            _mediator = _fixture.Service.GetService<IMediator>();
+            _salarioRepository = _fixture.Service.GetService<ISalarioRepository>();
+            _notifications = (DomainNotificationHandler)_fixture.Service.GetService<INotificationHandler<DomainNotification>>();
+            _fixture.ClearDataBase();
         }
 
         [Fact]

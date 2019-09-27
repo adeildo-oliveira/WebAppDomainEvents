@@ -10,14 +10,18 @@ using Xunit;
 
 namespace Tests.Integration.Commands
 {
-    public class DomainEventsContextTests : IntegrationTestFixture
+    public class DomainEventsContextTests : IClassFixture<IntegrationTestFixture>
     {
         private readonly ISalarioRepository _salarioRepository;
+        private readonly IntegrationTestFixture _fixture;
+        private readonly CancellationTokenSource source = new CancellationTokenSource();
 
-        public DomainEventsContextTests()
+        public DomainEventsContextTests(IntegrationTestFixture fixture)
         {
-            _salarioRepository = Service.GetService<ISalarioRepository>();
-            Thread.Sleep(3000);
+            Task.Delay(1000, source.Token).Wait();
+            _fixture = fixture;
+            _salarioRepository = _fixture.Service.GetService<ISalarioRepository>();
+            _fixture.ClearDataBase();
         }
 
         [Theory]
@@ -29,7 +33,7 @@ namespace Tests.Integration.Commands
         {
             var salario = new Salario(pagamento, adiantamento);
 
-            await Criar(salario);
+            await _fixture.Criar(salario);
             var resultado = await _salarioRepository.ObterSalarioPorIdAsync(salario.Id);
 
             resultado.Should().NotBeNull();
@@ -49,7 +53,7 @@ namespace Tests.Integration.Commands
             var despesaMensal = new DespesaMensal(descricao, valor, data)
                 .AdicionarSalario(salario);
 
-            await Criar(despesaMensal);
+            await _fixture.Criar(despesaMensal);
 
             var resultado = await _salarioRepository.ObterSalarioPorIdAsync(salario.Id);
             var resultadoDespesaMensal = resultado.DespesasMensais.FirstOrDefault();

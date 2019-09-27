@@ -5,7 +5,6 @@ namespace Tests.Shared.Builders.Commands
 {
     public class AddDespesaMensalCommandBuilder : InMemoryBuilder<AddDespesaMensalCommand>
     {
-        private Guid _id;
         private string _descricao;
         private decimal _valor;
         private DateTime _data;

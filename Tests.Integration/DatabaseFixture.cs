@@ -32,10 +32,10 @@ namespace Tests.Integration
             return entity;
         }
 
-        public async Task<T> BuscarAsync<T>(Expression<Func<T, bool>> predicate) where T : class => 
+        protected async Task<T> BuscarAsync<T>(Expression<Func<T, bool>> predicate) where T : class => 
             await Context.Set<T>().AsNoTracking().Where(predicate).FirstOrDefaultAsync();
 
-        public async Task<T> BuscarTodos<T>() where T : class =>
+        protected async Task<T> BuscarTodos<T>() where T : class =>
             await Context.Set<T>().AsNoTracking().FirstOrDefaultAsync();
 
         public void ClearDataBase()
@@ -43,11 +43,11 @@ namespace Tests.Integration
             using (var db = new DomainEventsContext())
             {
                 db.Database.Migrate();
-                db.Database.ExecuteSqlCommand(Script());
+                db.Database.ExecuteSqlCommand(Script);
             }
         }
 
-        private static string Script() => new StringBuilder(@" 
+        private static string Script => new StringBuilder(@" 
             ALTER TABLE Salario NOCHECK CONSTRAINT ALL
             ALTER TABLE DespesaMensal NOCHECK CONSTRAINT ALL
   

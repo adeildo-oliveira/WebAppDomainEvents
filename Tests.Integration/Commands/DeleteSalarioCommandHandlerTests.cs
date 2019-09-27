@@ -13,25 +13,30 @@ using Xunit;
 
 namespace Tests.Integration.Commands
 {
-    public class DeleteSalarioCommandHandlerTests : IntegrationTestFixture
+    public class DeleteSalarioCommandHandlerTests : IClassFixture<IntegrationTestFixture>
     {
         private readonly IMediator _mediator;
         private readonly ISalarioRepository _salarioRepository;
         private readonly DomainNotificationHandler _notifications;
+        private readonly IntegrationTestFixture _fixture;
+        private readonly CancellationTokenSource source = new CancellationTokenSource();
 
-        public DeleteSalarioCommandHandlerTests()
+        public DeleteSalarioCommandHandlerTests(IntegrationTestFixture fixture)
         {
-            _mediator = Service.GetService<IMediator>();
-            _salarioRepository = Service.GetService<ISalarioRepository>();
-            _notifications = (DomainNotificationHandler)Service.GetService<INotificationHandler<DomainNotification>>();
-            Thread.Sleep(1000);
+            Task.Delay(3000, source.Token).Wait();
+            _fixture = fixture;
+            _mediator = _fixture.Service.GetService<IMediator>();
+            _salarioRepository = _fixture.Service.GetService<ISalarioRepository>();
+            _notifications = (DomainNotificationHandler)_fixture.Service.GetService<INotificationHandler<DomainNotification>>();
+            _fixture.ClearDataBase();
         }
 
         [Fact]
         public async Task DeveValidarSalarioAntesDeExcluir()
         {
-            var command = new DeleteSalarioCommand { Status = true };
+            await _fixture.Criar(new Salario(12345.42M, 54321.24M).AtualizarStatus(true));
 
+            var command = new DeleteSalarioCommand { Status = true };
             var resultado = await _mediator.Send(command);
 
             resultado.Should().BeFalse();
@@ -39,7 +44,7 @@ namespace Tests.Integration.Commands
             _notifications.GetNotifications().Should().HaveCount(2);
 
             var resultadoBusca = await _salarioRepository.ObterSalarioAsync();
-            resultadoBusca.FirstOrDefault().Should().BeNull();
+            resultadoBusca.FirstOrDefault().Status.Should().BeTrue();
         }
 
         [Fact]
@@ -73,7 +78,7 @@ namespace Tests.Integration.Commands
                 Status = false
             };
 
-            await Criar(salario);
+            await _fixture.Criar(salario);
 
             var resultado = await _mediator.Send(command);
 

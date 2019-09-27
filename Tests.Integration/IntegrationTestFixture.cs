@@ -10,8 +10,6 @@ namespace Tests.Integration
 
         public IntegrationTestFixture()
         {
-            ClearDataBase();
-
             var services = new ServiceCollection();
             NativeInjectorBootStrapper.RegisterServices(services);
 
