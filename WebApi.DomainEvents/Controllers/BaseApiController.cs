@@ -8,11 +8,11 @@ using WebAppDomainEvents.Domain.Notifications;
 
 namespace WebApi.DomainEvents.Controllers
 {
-    public abstract class ApiController : ControllerBase
+    public abstract class BaseApiController : ControllerBase
     {
         private readonly DomainNotificationHandler _notifications;
 
-        protected ApiController(INotificationHandler<DomainNotification> notifications) => _notifications = (DomainNotificationHandler)notifications;
+        protected BaseApiController(INotificationHandler<DomainNotification> notifications) => _notifications = (DomainNotificationHandler)notifications;
 
         protected IEnumerable<DomainNotification> Notifications => _notifications.GetNotifications();
 

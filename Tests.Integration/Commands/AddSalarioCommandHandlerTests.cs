@@ -21,7 +21,7 @@ namespace Tests.Integration.Commands
 
         public AddSalarioCommandHandlerTests(IntegrationTestFixture fixture)
         {
-            Task.Delay(2000, source.Token).Wait();
+            Task.Delay(3000, source.Token).Wait();
             _fixture = fixture;
             _mediator = _fixture.Service.GetService<IMediator>();
             _salarioRepository = _fixture.Service.GetService<ISalarioRepository>();
