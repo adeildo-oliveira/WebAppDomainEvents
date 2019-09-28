@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace WebApi.DomainEvents.Controllers
+namespace WebApi.DomainEvents.Controllers.v2
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("v2/[controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]

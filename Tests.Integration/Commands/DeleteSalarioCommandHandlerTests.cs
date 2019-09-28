@@ -23,7 +23,7 @@ namespace Tests.Integration.Commands
 
         public DeleteSalarioCommandHandlerTests(IntegrationTestFixture fixture)
         {
-            Task.Delay(3000, source.Token).Wait();
+            Task.Delay(4200, source.Token).Wait();
             _fixture = fixture;
             _mediator = _fixture.Service.GetService<IMediator>();
             _salarioRepository = _fixture.Service.GetService<ISalarioRepository>();

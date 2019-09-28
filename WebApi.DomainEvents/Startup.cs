@@ -19,7 +19,26 @@ namespace WebApi.DomainEvents
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "POC Domain Events",
+                    Version = "v1",
+                    Contact = new OpenApiContact
+                    {
+                        Email = "teste@noemail.com",
+                        Name = "Equipe interna"
+                    }
+                });
+                c.SwaggerDoc("v2", new OpenApiInfo
+                {
+                    Title = "POC Domain Events",
+                    Version = "v2",
+                    Contact = new OpenApiContact
+                    {
+                        Email = "teste@noemail.com",
+                        Name = "Equipe interna"
+                    }
+                });
             });
 
             NativeInjectorBootStrapper.RegisterServices(services);
@@ -42,7 +61,8 @@ namespace WebApi.DomainEvents
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+                c.SwaggerEndpoint("/swagger/v2/swagger.json", "API V2");
             });
         }
     }
