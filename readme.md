@@ -1,6 +1,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/ucxwgqb0ypj73tt9?svg=true)](https://ci.appveyor.com/project/adeildo-oliveira/webappdomainevents)
 
->## Banco de Dados
+>## WebApiDomainEvents
 Este projeto tem como objetivo, exemplificar o uso do IMediator. Baseando-se nos conceitos de eventos, o domínio deste projeto possui comandos que executam suas devidas responsabilidades para comunicar com a base de dados bem como realizar as validações.
 
 ### [NuGet Mediator](https://www.nuget.org/packages/MediatR)
