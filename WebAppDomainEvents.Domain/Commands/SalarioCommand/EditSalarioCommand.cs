@@ -1,12 +1,9 @@
-﻿using System;
-using WebAppDomainEvents.Domain.Validations.Salario;
+﻿using WebAppDomainEvents.Domain.Validations.SalarioModel;
 
 namespace WebAppDomainEvents.Domain.Commands.SalarioCommand
 {
-    public class EditSalarioCommand : AddSalarioCommand
+    public class EditSalarioCommand : CommandBaseSalario
     {
-        public Guid Id { get; set; }
-
         public override bool IsValid()
         {
             ValidationResult = new EditSalarioCommandValidation().Validate(this);

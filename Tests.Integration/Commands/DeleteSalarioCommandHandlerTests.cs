@@ -86,7 +86,7 @@ namespace Tests.Integration.Commands
             _notifications.HasNotifications().Should().BeFalse();
             _notifications.GetNotifications().Should().HaveCount(0);
 
-            var resultadoBusca = await _salarioRepository.ObterSalarioPorIdAsync(salario.Id);
+            var resultadoBusca = await _fixture.BuscarAsync<Salario>(x => x.Id == salario.Id);
             resultadoBusca.Should().NotBeNull();
             resultadoBusca.Id.Should().Be(salario.Id);
             resultadoBusca.Pagamento.Should().Be(salario.Pagamento);

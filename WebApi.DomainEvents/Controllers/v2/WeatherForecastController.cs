@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace WebApi.DomainEvents.Controllers.v2
 {
     [ApiController]
-    [Route("v2/[controller]")]
+    [Route("v2/api/[controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]

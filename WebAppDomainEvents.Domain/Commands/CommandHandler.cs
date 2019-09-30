@@ -13,9 +13,7 @@ namespace WebAppDomainEvents.Domain.Commands
         protected async Task ReturnValidationErrors(Command command)
         {
             foreach (var error in command.ValidationResult.Errors)
-            {
                 await _mediator.Publish(new DomainNotification(error.PropertyName, error.ErrorMessage));
-            }
         }
     }
 }
