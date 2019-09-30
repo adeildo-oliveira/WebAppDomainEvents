@@ -64,5 +64,33 @@ namespace Tests.Integration.Commands
             resultadoDespesaMensal.Data.Date.Should().Be(despesaMensal.Data.Date);
             resultadoDespesaMensal.Status.Should().BeTrue();
         }
+
+        [Fact]
+        public async Task DeveConsultarSalarioPorId()
+        {
+            var salario = new Salario(12345.55M, 54321.56M);
+            await _fixture.Criar(salario);
+
+            var resultado = await _salarioRepository.ObterSalarioPorIdAsync(salario.Id);
+            
+            resultado.Should().NotBeNull();
+            salario.Should().BeEquivalentTo(resultado);
+        }
+
+        [Fact]
+        public async Task DeveConsultarSalarios()
+        {
+            var salario1 = new Salario(2857.02M, 3178.62M);
+            var salario2 = new Salario(2857.00M, 3178.00M);
+            var salario3 = new Salario(12345.55M, 54321.56M);
+            await _fixture.Criar(salario1);
+            await _fixture.Criar(salario2);
+            await _fixture.Criar(salario3);
+
+            var resultado = await _salarioRepository.ObterSalarioAsync();
+            
+            resultado.Should().NotBeNull();
+            resultado.Should().HaveCount(3);
+        }
     }
 }

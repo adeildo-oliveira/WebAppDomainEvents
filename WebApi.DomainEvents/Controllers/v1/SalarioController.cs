@@ -1,53 +1,84 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using WebApi.DomainEvents.Models;
+using WebAppDomainEvents.Domain.Commands.SalarioCommand;
+using WebAppDomainEvents.Domain.Interfaces.Repository;
 using WebAppDomainEvents.Domain.Notifications;
 
 namespace WebApi.DomainEvents.Controllers.v1
 {
-    [Route("api/[controller]")]
+    [Route("v1/api/[controller]")]
     [ApiController]
     public class SalarioController : BaseApiController
     {
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
+        private readonly ISalarioRepository _repository;
 
-        public SalarioController(INotificationHandler<DomainNotification> notifications, IMediator mediator) 
-            : base(notifications) => _mediator = mediator;
+        public SalarioController(INotificationHandler<DomainNotification> notifications
+            , IMediator mediator
+            , IMapper mapper
+            , ISalarioRepository repository) 
+            : base(notifications)
+        {
+            _mediator = mediator;
+            _mapper = mapper;
+            _repository = repository;
+        }
 
         [HttpGet]
-        [Route("ObterSalario/{id:guid}")]
-        public IEnumerable<string> Get()
+        [Route("ObterSalario")]
+        public async Task<IActionResult> ObterSalario()
         {
-            return new string[] { "value1", "value2" };
+            var salario = await _repository.ObterSalarioAsync();
+            var salarioView = _mapper.Map<IReadOnlyCollection<SalarioView>>(salario);
+
+            return Response(salarioView);
         }
 
         
-        [HttpGet("ObterSalario/{id:guid}", Name = "Get")]
-        public string Get(int id)
+        [HttpGet]
+        [Route("ObterSalario/{id:guid}")]
+        public async Task<IActionResult> ObterSalarioPorId(Guid id)
         {
-            return "value";
+            var salario = await _repository.ObterSalarioPorIdAsync(id);
+            var salarioView = _mapper.Map<SalarioView>(salario);
+
+            return Response(salarioView);
         }
 
-        // POST: api/Salario
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Route("PostAdicionar")]
+        public async Task<IActionResult> PostAdicionar([FromBody] AddSalarioCommandView salarioCommand)
         {
+            var salario = _mapper.Map<AddSalarioCommand>(salarioCommand);
+            await _mediator.Send(salario);
+
+            return Response("Salário adicionado com sucesso.");
         }
 
-        // PUT: api/Salario/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        [Route("PutEditar")]
+        public async Task<IActionResult> PutAdicionar([FromBody] EditSalarioCommandView salarioCommand)
         {
+            var salario = _mapper.Map<EditSalarioCommand>(salarioCommand);
+            await _mediator.Send(salario);
+
+            return Response("Salário atualizado com sucesso.");
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<IActionResult> Delete([FromBody] DeleteSalarioCommandView salarioCommand)
         {
+            var salario = _mapper.Map<DeleteSalarioCommand>(salarioCommand);
+            await _mediator.Send(salario);
+
+            return Response("Salário excluído com sucesso.");
         }
     }
 }

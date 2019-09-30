@@ -31,7 +31,7 @@ namespace Tests.Unit.Commands.Validations.Salario
 
             command.ValidationResult.IsValid.Should().BeFalse();
             command.ValidationResult.Errors.Should().HaveCount(1);
-            command.ValidationResult.Errors[0].ErrorMessage.Should().Be("O campo status deve ser informado");
+            command.ValidationResult.Errors[0].ErrorMessage.Should().Be("Campo status inválido para exclusão");
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Tests.Unit.Commands.Validations.Salario
             command.ValidationResult.IsValid.Should().BeFalse();
             command.ValidationResult.Errors.Should().HaveCount(2);
             command.ValidationResult.Errors[0].ErrorMessage.Should().Be("Id salário inválido");
-            command.ValidationResult.Errors[1].ErrorMessage.Should().Be("O campo status deve ser informado");
+            command.ValidationResult.Errors[1].ErrorMessage.Should().Be("Campo status inválido para exclusão");
         }
 
         [Fact]

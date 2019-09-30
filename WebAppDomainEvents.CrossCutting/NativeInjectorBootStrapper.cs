@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using WebAppDomainEvents.Domain.Commands.SalarioCommand;
+using System.Reflection;
 using WebAppDomainEvents.Domain.Interfaces.Repository;
 using WebAppDomainEvents.Domain.Notifications;
 using WebAppDomainEvents.Infra.Context;
@@ -13,7 +12,6 @@ namespace WebAppDomainEvents.CrossCutting
     {
         public static void RegisterServices(IServiceCollection services)
         {
-            services.AddMediatR(AppDomain.CurrentDomain.Load("WebApi.DomainEvents"));
             DomainServices(services);
             InfraServices(services);
         }
@@ -26,9 +24,7 @@ namespace WebAppDomainEvents.CrossCutting
 
         private static void DomainServices(IServiceCollection services)
         {
-            services.AddScoped<IRequestHandler<AddSalarioCommand, bool>, AddSalarioCommandHandler>();
-            services.AddScoped<IRequestHandler<EditSalarioCommand, bool>, EditSalarioCommandHandler>();
-            services.AddScoped<IRequestHandler<DeleteSalarioCommand, bool>, DeleteSalarioCommandHandler>();
+            services.AddMediatR(Assembly.Load("WebAppDomainEvents.Domain"));
             services.AddScoped<INotificationHandler<DomainNotification>, DomainNotificationHandler>();
         }
     }

@@ -32,7 +32,7 @@ namespace Tests.Integration
             return entity;
         }
 
-        protected async Task<T> BuscarAsync<T>(Expression<Func<T, bool>> predicate) where T : class => 
+        public async Task<T> BuscarAsync<T>(Expression<Func<T, bool>> predicate) where T : class => 
             await Context.Set<T>().AsNoTracking().Where(predicate).FirstOrDefaultAsync();
 
         protected async Task<T> BuscarTodos<T>() where T : class =>

@@ -18,21 +18,21 @@ namespace WebApi.DomainEvents.Controllers
 
         protected bool IsValidOperation() => !_notifications.HasNotifications();
 
-        protected new IActionResult Response(HttpStatusCode httpStatusCode, object result = null)
+        protected new IActionResult Response(object result = null)
         {
             if (IsValidOperation())
             {
                 return Ok(new
                 {
                     resultado = result,
-                    StatusCode = (int)httpStatusCode
+                    StatusCode = (int)HttpStatusCode.OK
                 });
             }
 
             return BadRequest(new ResponseMensage
             {
                 Mensagem = _notifications.GetNotifications().Select(n => n.Value),
-                StatusCode = (int)httpStatusCode
+                StatusCode = (int)HttpStatusCode.BadRequest
             });
         }
 
