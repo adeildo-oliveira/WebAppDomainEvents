@@ -1,13 +1,9 @@
-﻿using System;
-using WebAppDomainEvents.Domain.Validations.DespesaMensal;
+﻿using WebAppDomainEvents.Domain.Validations.DespesaMensal;
 
 namespace WebAppDomainEvents.Domain.Commands.DespesaMensal
 {
-    public class DeleteDespesaMensalCommand : Command
+    public class DeleteDespesaMensalCommand : CommandBaseDespesaMensal
     {
-        public Guid Id { get; set; }
-        public bool Status { get; set; }
-
         public override bool IsValid()
         {
             ValidationResult = new DeleteDespesaMensalCommandValidation().Validate(this);

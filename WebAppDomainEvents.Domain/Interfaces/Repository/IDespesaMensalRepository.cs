@@ -5,7 +5,7 @@ using WebAppDomainEvents.Domain.Models;
 
 namespace WebAppDomainEvents.Domain.Interfaces.Repository
 {
-    public interface IDespesaMensalRepository
+    public interface IDespesaMensalRepository : IDisposable
     {
         Task AdicionarDespesaMensalAsync(DespesaMensal despesaMensal);
         Task<DespesaMensal> ObterDespesaMensalPorIdAsync(Guid id);
