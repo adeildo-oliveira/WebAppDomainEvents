@@ -27,7 +27,7 @@ namespace Tests.Unit.Commands.Validations.DespesaMensal
             command.IsValid();
 
             command.ValidationResult.IsValid.Should().BeFalse();
-            command.ValidationResult.Errors[0].ErrorMessage.Should().Be("O campo status deve ser informado");
+            command.ValidationResult.Errors[0].ErrorMessage.Should().Be("Campo status inválido para exclusão");
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace Tests.Unit.Commands.Validations.DespesaMensal
             command.ValidationResult.IsValid.Should().BeFalse();
             command.ValidationResult.Errors.Should().HaveCount(2);
             command.ValidationResult.Errors[0].ErrorMessage.Should().Be("Id despesa mensal inválido");
-            command.ValidationResult.Errors[1].ErrorMessage.Should().Be("O campo status deve ser informado");
+            command.ValidationResult.Errors[1].ErrorMessage.Should().Be("Campo status inválido para exclusão");
         }
 
         [Fact]
