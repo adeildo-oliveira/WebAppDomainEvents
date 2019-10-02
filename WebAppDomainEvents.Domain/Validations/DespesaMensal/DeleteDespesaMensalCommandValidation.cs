@@ -5,6 +5,7 @@
         public DeleteDespesaMensalCommandValidation()
         {
             RuleId();
+            RuleIdSalario();
             RuleStatus();
         }
     }

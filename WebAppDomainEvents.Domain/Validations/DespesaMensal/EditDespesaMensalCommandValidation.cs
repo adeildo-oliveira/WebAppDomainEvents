@@ -5,6 +5,7 @@
         public EditDespesaMensalCommandValidation()
         {
             RuleId();
+            RuleIdSalario();
             RuleDescricao();
             RuleValor();
             RuleData();
