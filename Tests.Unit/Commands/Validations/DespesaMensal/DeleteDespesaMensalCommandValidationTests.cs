@@ -8,9 +8,11 @@ namespace Tests.Unit.Commands.Validations.DespesaMensal
     public class DeleteDespesaMensalCommandValidationTests
     {
         [Fact]
-        public void DeveValidarIdDespesaMensal()
+        public void DeleteDespesaMensalDeveValidarIdDespesaMensal()
         {
-            var command = new DeleteDespesaMensalCommandBuilder().Instanciar();
+            var command = new DeleteDespesaMensalCommandBuilder()
+                .ComIdSalario(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
+                .Instanciar();
             command.IsValid();
 
             command.ValidationResult.IsValid.Should().BeFalse();
@@ -18,10 +20,24 @@ namespace Tests.Unit.Commands.Validations.DespesaMensal
         }
 
         [Fact]
-        public void DeveValidarStatusDespesaMensal()
+        public void DeleteDespesaMensalDeveValidarIdSalario()
         {
             var command = new DeleteDespesaMensalCommandBuilder()
-                .ComId(Guid.NewGuid())
+                .ComId(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
+                .Instanciar();
+            command.IsValid();
+
+            command.ValidationResult.IsValid.Should().BeFalse();
+            command.ValidationResult.Errors.Count.Should().Be(1);
+            command.ValidationResult.Errors[0].ErrorMessage.Should().Be("Id salário inválido");
+        }
+
+        [Fact]
+        public void DeleteDespesaMensalDeveValidarStatusDespesaMensal()
+        {
+            var command = new DeleteDespesaMensalCommandBuilder()
+                .ComId(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
+                .ComIdSalario(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
                 .ComStatus(true)
                 .Instanciar();
             command.IsValid();
@@ -31,9 +47,10 @@ namespace Tests.Unit.Commands.Validations.DespesaMensal
         }
 
         [Fact]
-        public void DeveValidarIdEStatusDespesaMensal()
+        public void DeleteDespesaMensalDeveValidarIdEStatusDespesaMensal()
         {
             var command = new DeleteDespesaMensalCommandBuilder()
+                .ComIdSalario(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
                 .ComStatus(true)
                 .Instanciar();
             command.IsValid();
@@ -45,10 +62,11 @@ namespace Tests.Unit.Commands.Validations.DespesaMensal
         }
 
         [Fact]
-        public void NaoDeveApresentarMensagemValidacaoDespesaMensal()
+        public void DeleteDespesaMensalNaoDeveApresentarMensagemValidacaoDespesaMensal()
         {
             var command = new DeleteDespesaMensalCommandBuilder()
-                .ComId(Guid.NewGuid())
+                .ComId(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
+                .ComIdSalario(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
                 .ComStatus(false)
                 .Instanciar();
             command.IsValid();

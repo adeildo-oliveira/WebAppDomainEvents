@@ -1,6 +1,6 @@
 ﻿using WebAppDomainEvents.Domain.Validations.DespesaMensal;
 
-namespace WebAppDomainEvents.Domain.Commands.DespesaMensal
+namespace WebAppDomainEvents.Domain.Commands.DespesaMensalCommand
 {
     public class EditDespesaMensalCommand : CommandBaseDespesaMensal
     {

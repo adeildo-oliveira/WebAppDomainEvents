@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using System;
-using WebAppDomainEvents.Domain.Commands.DespesaMensal;
+using WebAppDomainEvents.Domain.Commands.DespesaMensalCommand;
 
 namespace WebAppDomainEvents.Domain.Validations.DespesaMensal
 {
@@ -9,6 +9,9 @@ namespace WebAppDomainEvents.Domain.Validations.DespesaMensal
         protected void RuleId() => RuleFor(c => c.Id)
                         .NotEqual(Guid.Empty)
                         .WithMessage("Id despesa mensal inválido");
+        protected void RuleIdSalario() => RuleFor(c => c.IdSalario)
+                        .NotEqual(Guid.Empty)
+                        .WithMessage("Id salário inválido");
         protected void RuleDescricao() => RuleFor(x => x.Descricao)
                         .NotEmpty().When(m => string.IsNullOrWhiteSpace(m.Descricao))
                         .WithMessage("Descrição inválida");
@@ -17,7 +20,7 @@ namespace WebAppDomainEvents.Domain.Validations.DespesaMensal
                         .WithMessage("O valor Pagamento deve ser maior que zero");
         protected void RuleData() => RuleFor(x => x.Data)
                         .Must(ValidDate)
-                        .WithMessage("A data inválida");
+                        .WithMessage("Data inválida");
         protected void RuleStatus() => RuleFor(c => c.Status)
                         .Must(ValidateBoolean)
                         .WithMessage("Campo status inválido para exclusão");

@@ -18,12 +18,12 @@ namespace Tests.Unit.Commands
     public class SalarioCommandHandlerTests
     {
         private readonly AutoMocker _mocker;
-        private readonly SalarioCommandHandler _salarioCommandHandler;
+        private readonly SalarioCommandHandler _commandHandler;
 
         public SalarioCommandHandlerTests()
         {
             _mocker = new AutoMocker();
-            _salarioCommandHandler = _mocker.CreateInstance<SalarioCommandHandler>();
+            _commandHandler = _mocker.CreateInstance<SalarioCommandHandler>();
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace Tests.Unit.Commands
                     token.IsCancellationRequested.Should().BeFalse();
                 });
 
-            var resultado = await _salarioCommandHandler.Handle(commandBuilder, default);
+            var resultado = await _commandHandler.Handle(commandBuilder, default);
 
             resultado.Should().BeFalse();
             commandBuilder.ValidationResult.Errors.Should().HaveCount(2);
@@ -72,7 +72,7 @@ namespace Tests.Unit.Commands
                 });
             _mocker.GetMock<IMediator>().Setup(x => x.Publish(It.IsAny<DomainNotification>(), default)).Returns(Task.CompletedTask);
 
-            var resultado = await _salarioCommandHandler.Handle(commandBuilder, default);
+            var resultado = await _commandHandler.Handle(commandBuilder, default);
 
             resultado.Should().BeTrue();
             _mocker.Verify<IMediator>(x => x.Publish(It.IsAny<DomainNotification>(), default), Times.Never);
@@ -96,7 +96,7 @@ namespace Tests.Unit.Commands
                     token.IsCancellationRequested.Should().BeFalse();
                 });
 
-            var resultado = await _salarioCommandHandler.Handle(commandBuilder, default);
+            var resultado = await _commandHandler.Handle(commandBuilder, default);
 
             resultado.Should().BeFalse();
             _mocker.Verify<IMediator>(x => x.Publish(It.IsAny<DomainNotification>(), default), Times.Exactly(3));
@@ -125,7 +125,7 @@ namespace Tests.Unit.Commands
                     salario.Status.Should().BeTrue();
                 });
 
-            var resultado = await _salarioCommandHandler.Handle(commandBuilder, default);
+            var resultado = await _commandHandler.Handle(commandBuilder, default);
 
             resultado.Should().BeTrue();
             _mocker.Verify<IMediator>(x => x.Publish(It.IsAny<DomainNotification>(), default), Times.Never);
@@ -150,7 +150,7 @@ namespace Tests.Unit.Commands
                     token.IsCancellationRequested.Should().BeFalse();
                 });
 
-            var resultado = await _salarioCommandHandler.Handle(commandBuilder, default);
+            var resultado = await _commandHandler.Handle(commandBuilder, default);
 
             resultado.Should().BeFalse();
             commandBuilder.ValidationResult.Errors.Should().HaveCount(1);
@@ -184,7 +184,7 @@ namespace Tests.Unit.Commands
                     salario.Status.Should().BeFalse();
                 });
 
-            var resultado = await _salarioCommandHandler.Handle(commandBuilder, default);
+            var resultado = await _commandHandler.Handle(commandBuilder, default);
 
             resultado.Should().BeTrue();
             _mocker.Verify<IMediator>(x => x.Publish(It.IsAny<DomainNotification>(), default), Times.Never);

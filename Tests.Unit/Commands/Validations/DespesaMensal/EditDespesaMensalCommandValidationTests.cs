@@ -8,9 +8,10 @@ namespace Tests.Unit.Commands.Validations.DespesaMensal
     public class EditDespesaMensalCommandValidationTests
     {
         [Fact]
-        public void DeveValidarId()
+        public void EditDespesaMensalDeveValidarId()
         {
             var command = new EditDespesaMensalCommandBuilder()
+                .ComIdSalario(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
                 .ComDescricao("teste")
                 .ComValor(decimal.One)
                 .ComData(DateTime.Now)
@@ -22,13 +23,30 @@ namespace Tests.Unit.Commands.Validations.DespesaMensal
             command.ValidationResult.Errors[0].ErrorMessage.Should().Be("Id despesa mensal inválido");
         }
 
+        [Fact]
+        public void EditDespesaMensalDeveValidarIdSalario()
+        {
+            var command = new EditDespesaMensalCommandBuilder()
+                .ComId(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
+                .ComDescricao("Teste")
+                .ComValor(decimal.One)
+                .ComData(DateTime.Now)
+                .Instanciar();
+            command.IsValid();
+
+            command.ValidationResult.IsValid.Should().BeFalse();
+            command.ValidationResult.Errors.Count.Should().Be(1);
+            command.ValidationResult.Errors[0].ErrorMessage.Should().Be("Id salário inválido");
+        }
+
         [Theory]
         [InlineData("")]
         [InlineData(null)]
-        public void DeveValidarDescricao(string descricao)
+        public void EditDespesaMensalDeveValidarDescricao(string descricao)
         {
             var command = new EditDespesaMensalCommandBuilder()
-                .ComId(Guid.NewGuid())
+                .ComId(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
+                .ComIdSalario(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
                 .ComDescricao(descricao)
                 .ComValor(decimal.One)
                 .ComData(DateTime.Now)
@@ -43,10 +61,11 @@ namespace Tests.Unit.Commands.Validations.DespesaMensal
         [Theory]
         [InlineData(-1)]
         [InlineData(0)]
-        public void DeveValidarValor(decimal valor)
+        public void EditDespesaMensalDeveValidarValor(decimal valor)
         {
             var command = new EditDespesaMensalCommandBuilder()
-                .ComId(Guid.NewGuid())
+                .ComId(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
+                .ComIdSalario(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
                 .ComDescricao("Teste")
                 .ComValor(valor)
                 .ComData(DateTime.Now)
@@ -59,10 +78,11 @@ namespace Tests.Unit.Commands.Validations.DespesaMensal
         }
 
         [Fact]
-        public void DeveValidarData()
+        public void EditDespesaMensalDeveValidarData()
         {
             var command = new EditDespesaMensalCommandBuilder()
-                .ComId(Guid.NewGuid())
+                .ComId(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
+                .ComIdSalario(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
                 .ComDescricao("Teste")
                 .ComValor(decimal.One)
                 .ComData(DateTime.MinValue)
@@ -71,14 +91,15 @@ namespace Tests.Unit.Commands.Validations.DespesaMensal
 
             command.ValidationResult.IsValid.Should().BeFalse();
             command.ValidationResult.Errors.Count.Should().Be(1);
-            command.ValidationResult.Errors[0].ErrorMessage.Should().Be("A data inválida");
+            command.ValidationResult.Errors[0].ErrorMessage.Should().Be("Data inválida");
         }
 
         [Fact]
-        public void NaoDeveApresentarMensagensValidacao()
+        public void EditDespesaMensalNaoDeveApresentarMensagensValidacao()
         {
             var command = new EditDespesaMensalCommandBuilder()
-                .ComId(Guid.NewGuid())
+                .ComId(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
+                .ComIdSalario(new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"))
                 .ComDescricao("Teste")
                 .ComValor(decimal.One)
                 .ComData(DateTime.Now)

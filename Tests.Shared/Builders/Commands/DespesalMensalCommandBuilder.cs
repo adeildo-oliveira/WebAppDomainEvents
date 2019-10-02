@@ -1,13 +1,20 @@
 ﻿using System;
-using WebAppDomainEvents.Domain.Commands.DespesaMensal;
+using WebAppDomainEvents.Domain.Commands.DespesaMensalCommand;
 
 namespace Tests.Shared.Builders.Commands
 {
     public class AddDespesaMensalCommandBuilder : InMemoryBuilder<AddDespesaMensalCommand>
     {
+        private Guid _idSalario;
         private string _descricao;
         private decimal _valor;
         private DateTime _data;
+
+        public AddDespesaMensalCommandBuilder ComIdSalario(Guid idSalario)
+        {
+            _idSalario = idSalario;
+            return this;
+        }
 
         public AddDespesaMensalCommandBuilder ComDescricao(string descricao)
         {
@@ -30,6 +37,7 @@ namespace Tests.Shared.Builders.Commands
         public override AddDespesaMensalCommand Instanciar() => new AddDespesaMensalCommand
         {
             Descricao = _descricao,
+            IdSalario = _idSalario,
             Valor = _valor,
             Data = _data
         };
@@ -38,6 +46,7 @@ namespace Tests.Shared.Builders.Commands
     public class EditDespesaMensalCommandBuilder : InMemoryBuilder<EditDespesaMensalCommand>
     {
         private Guid _id;
+        private Guid _idSalario;
         private string _descricao;
         private decimal _valor;
         private DateTime _data;
@@ -45,6 +54,12 @@ namespace Tests.Shared.Builders.Commands
         public EditDespesaMensalCommandBuilder ComId(Guid id)
         {
             _id = id;
+            return this;
+        }
+
+        public EditDespesaMensalCommandBuilder ComIdSalario(Guid idSalario)
+        {
+            _idSalario = idSalario;
             return this;
         }
 
@@ -69,6 +84,7 @@ namespace Tests.Shared.Builders.Commands
         public override EditDespesaMensalCommand Instanciar() => new EditDespesaMensalCommand
         {
             Id = _id,
+            IdSalario = _idSalario,
             Descricao = _descricao,
             Valor = _valor,
             Data = _data
@@ -78,11 +94,18 @@ namespace Tests.Shared.Builders.Commands
     public class DeleteDespesaMensalCommandBuilder : InMemoryBuilder<DeleteDespesaMensalCommand>
     {
         private Guid _id;
+        private Guid _idSalario;
         private bool _status;
 
         public DeleteDespesaMensalCommandBuilder ComId(Guid id)
         {
             _id = id;
+            return this;
+        }
+        
+        public DeleteDespesaMensalCommandBuilder ComIdSalario(Guid idSalario)
+        {
+            _idSalario = idSalario;
             return this;
         }
 
@@ -95,6 +118,7 @@ namespace Tests.Shared.Builders.Commands
         public override DeleteDespesaMensalCommand Instanciar() => new DeleteDespesaMensalCommand
         {
             Id = _id,
+            IdSalario = _idSalario,
             Status = _status
         };
     }
