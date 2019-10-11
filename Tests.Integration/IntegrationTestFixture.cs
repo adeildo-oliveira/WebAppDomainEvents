@@ -1,25 +1,25 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
 using WebAppDomainEvents.CrossCutting;
+using Xunit;
 
 namespace Tests.Integration
 {
-    public class IntegrationTestFixture : DatabaseFixture, IDisposable
+    [Collection(Name)]
+    public class IntegrationTestFixture : IClassFixture<DatabaseFixture>
     {
+        public const string Name = nameof(IntegrationTestFixture);
         public ServiceProvider Service;
+        public readonly DatabaseFixture _fixture;
 
-        public IntegrationTestFixture()
+        public IntegrationTestFixture(DatabaseFixture fixture)
         {
+            _fixture = fixture;
+            _fixture.ClearDataBase();
+
             var services = new ServiceCollection();
             NativeInjectorBootStrapper.RegisterServices(services);
-
+            
             Service = services.BuildServiceProvider();
-        }
-
-        public new void Dispose()
-        {
-            Context.Dispose();
-            Service.Dispose();
         }
     }
 }

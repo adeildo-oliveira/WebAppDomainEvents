@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using WebAppDomainEvents.Domain.Commands.SalarioCommand;
 using WebAppDomainEvents.Domain.Interfaces.Repository;
@@ -13,28 +12,23 @@ using Xunit;
 
 namespace Tests.Integration.Commands
 {
-    public class DeleteSalarioCommandHandlerTests : IClassFixture<IntegrationTestFixture>
+    public class DeleteSalarioCommandHandlerTests : IntegrationTestFixture
     {
         private readonly IMediator _mediator;
         private readonly ISalarioRepository _salarioRepository;
         private readonly DomainNotificationHandler _notifications;
-        private readonly IntegrationTestFixture _fixture;
-        private readonly CancellationTokenSource source = new CancellationTokenSource();
 
-        public DeleteSalarioCommandHandlerTests(IntegrationTestFixture fixture)
+        public DeleteSalarioCommandHandlerTests(DatabaseFixture fixture) : base(fixture)
         {
-            Task.Delay(4200, source.Token).Wait();
-            _fixture = fixture;
-            _mediator = _fixture.Service.GetService<IMediator>();
-            _salarioRepository = _fixture.Service.GetService<ISalarioRepository>();
-            _notifications = (DomainNotificationHandler)_fixture.Service.GetService<INotificationHandler<DomainNotification>>();
-            _fixture.ClearDataBase();
+            _mediator = Service.GetService<IMediator>();
+            _salarioRepository = Service.GetService<ISalarioRepository>();
+            _notifications = (DomainNotificationHandler)Service.GetService<INotificationHandler<DomainNotification>>();
         }
 
         [Fact]
         public async Task DeveValidarSalarioAntesDeExcluir()
         {
-            await _fixture.Criar(new Salario(12345.42M, 54321.24M).AtualizarStatus(true));
+            await _fixture.CriarAsync(new Salario(12345.42M, 54321.24M).AtualizarStatus(true));
 
             var command = new DeleteSalarioCommand { Status = true };
             var resultado = await _mediator.Send(command);
@@ -78,7 +72,7 @@ namespace Tests.Integration.Commands
                 Status = false
             };
 
-            await _fixture.Criar(salario);
+            await _fixture.CriarAsync(salario);
 
             var resultado = await _mediator.Send(command);
 

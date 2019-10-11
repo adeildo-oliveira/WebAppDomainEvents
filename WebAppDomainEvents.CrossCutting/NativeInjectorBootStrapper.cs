@@ -20,6 +20,8 @@ namespace WebAppDomainEvents.CrossCutting
         {
             services.AddScoped<DomainEventsContext>();
             services.AddScoped<ISalarioRepository, SalarioRepository>();
+            services.AddScoped<ISalarioRepositoryReadOnly, SalarioRepositoryReadOnly>();
+            services.AddScoped<IDespesaMensalRepositoryReadOnly, DespesaMensalRepositoryReadOnly>();
         }
 
         private static void DomainServices(IServiceCollection services)

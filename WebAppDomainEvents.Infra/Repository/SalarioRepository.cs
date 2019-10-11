@@ -23,7 +23,8 @@ namespace WebAppDomainEvents.Infra.Repository
 
         public virtual async Task EditarSalarioAsync(Salario salario)
         {
-            _context.Set<Salario>().Update(salario);
+            _context.Attach(salario);
+            _context.Set<Salario>().Update(salario).State = EntityState.Modified;
             await CommitAsync();
         }
 

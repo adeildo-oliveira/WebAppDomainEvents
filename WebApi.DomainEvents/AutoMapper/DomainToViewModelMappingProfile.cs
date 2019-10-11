@@ -10,8 +10,11 @@ namespace WebApi.DomainEvents.AutoMapper
         {
             CreateMap<Salario, SalarioView>()
                 .ForMember(d => d.DespesasMensaisView, opt => opt.MapFrom(src => src.DespesasMensais));
+
+            CreateMap<Salario, DespesaSalarioView>();
+
             CreateMap<DespesaMensal, DespesaMensalView>()
-                .ForMember(d => d.SalarioView, opt => opt.MapFrom(src => src.Salario));
+                .ForMember(d => d.Salario, opt => opt.MapFrom(src => src.Salario));
         }
     }
 }

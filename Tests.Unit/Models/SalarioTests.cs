@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
 using System;
+using System.Linq;
 using Tests.Shared.Builders.Models;
+using WebAppDomainEvents.Domain.Models;
 using Xunit;
 
 namespace Tests.Unit.Models
@@ -51,6 +53,34 @@ namespace Tests.Unit.Models
             salarioBuilder.Pagamento.Should().Be(pagamento);
             salarioBuilder.Adiantamento.Should().Be(adiantamento);
             salarioBuilder.Status.Should().BeFalse();
+        }
+
+        [Fact]
+        public void AtualizarDadosDespesaMenal()
+        {
+            var data = DateTime.Now;
+            var despesaMensal = new DespesaMensal("Cartão", 22.55M, new DateTime(2019, 09, 05));
+            var despesaMensal2 = new DespesaMensal("Celular", 32.99M, new DateTime(2019, 09, 05));
+            var salario = new Salario(1200.22M, 1500.45M)
+                .AdicionarDespesaMensal(despesaMensal)
+                .AdicionarDespesaMensal(despesaMensal2);
+            
+            var result = salario.DespesasMensais.FirstOrDefault(x => x.Id == despesaMensal2.Id);
+            result.AtualizarDespesaMensal("NetFlix", 45.00M, data);
+
+            salario.DespesasMensais.Should().HaveCount(2);
+            salario.Id.Should().NotBeEmpty();
+            salario.Pagamento.Should().Be(1200.22M);
+            salario.Adiantamento.Should().Be(1500.45M);
+            salario.Status.Should().BeTrue();
+
+            salario.DespesasMensais.FirstOrDefault(x => x.Id == result.Id).Descricao.Should().Be("NetFlix");
+            salario.DespesasMensais.FirstOrDefault(x => x.Id == result.Id).Valor.Should().Be(45.00M);
+            salario.DespesasMensais.FirstOrDefault(x => x.Id == result.Id).Data.Should().Be(data);
+
+            salario.DespesasMensais.FirstOrDefault(x => x.Id == despesaMensal.Id).Descricao.Should().Be("Cartão");
+            salario.DespesasMensais.FirstOrDefault(x => x.Id == despesaMensal.Id).Valor.Should().Be(22.55M);
+            salario.DespesasMensais.FirstOrDefault(x => x.Id == despesaMensal.Id).Data.Should().Be(new DateTime(2019, 09, 05));
         }
     }
 }

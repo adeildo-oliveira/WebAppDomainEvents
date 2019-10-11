@@ -12,6 +12,7 @@ namespace WebAppDomainEvents.Infra.EntityConfig
             builder.Property(c => c.Pagamento).HasColumnType("decimal(7,2)").IsRequired();
             builder.Property(c => c.Adiantamento).HasColumnType("decimal(7,2)").IsRequired();
             builder.Property(e => e.Status).HasColumnType("bit");
+            builder.HasMany(x => x.DespesasMensais).WithOne(x => x.Salario).OnDelete(DeleteBehavior.Cascade);
             builder.ToTable("Salario");
         }
     }
