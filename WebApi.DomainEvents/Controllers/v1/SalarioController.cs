@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApi.DomainEvents.Models;
+using WebApi.DomainEvents.Models.CommandsView.SalarioCommandView;
 using WebAppDomainEvents.Domain.Commands.SalarioCommand;
 using WebAppDomainEvents.Domain.Interfaces.Repository;
 using WebAppDomainEvents.Domain.Notifications;
@@ -17,12 +18,12 @@ namespace WebApi.DomainEvents.Controllers.v1
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-        private readonly ISalarioRepository _repository;
+        private readonly ISalarioRepositoryReadOnly _repository;
 
         public SalarioController(INotificationHandler<DomainNotification> notifications
             , IMediator mediator
             , IMapper mapper
-            , ISalarioRepository repository) 
+            , ISalarioRepositoryReadOnly repository) 
             : base(notifications)
         {
             _mediator = mediator;
@@ -31,19 +32,18 @@ namespace WebApi.DomainEvents.Controllers.v1
         }
 
         [HttpGet]
-        [Route("ObterSalario")]
-        public async Task<IActionResult> ObterSalario()
+        [Route("ObterAsync")]
+        public async Task<IActionResult> ObterAsync()
         {
-            var salario = await _repository.ObterSalarioAsync();
+            var salario = await _repository.ObterSalariosAsync();
             var salarioView = _mapper.Map<IReadOnlyCollection<SalarioView>>(salario);
 
             return Response(salarioView);
         }
 
-        
         [HttpGet]
-        [Route("ObterSalario/{id:guid}")]
-        public async Task<IActionResult> ObterSalarioPorId(Guid id)
+        [Route("ObterPorIdAsync/{id:guid}")]
+        public async Task<IActionResult> ObterPorIdAsync(Guid id)
         {
             var salario = await _repository.ObterSalarioPorIdAsync(id);
             var salarioView = _mapper.Map<SalarioView>(salario);
@@ -52,8 +52,8 @@ namespace WebApi.DomainEvents.Controllers.v1
         }
 
         [HttpPost]
-        [Route("PostAdicionar")]
-        public async Task<IActionResult> PostAdicionar([FromBody] AddSalarioCommandView salarioCommand)
+        [Route("AdicionarAsync")]
+        public async Task<IActionResult> AdicionarAsync([FromBody] AddSalarioCommandView salarioCommand)
         {
             var salario = _mapper.Map<AddSalarioCommand>(salarioCommand);
             await _mediator.Send(salario);
@@ -62,8 +62,8 @@ namespace WebApi.DomainEvents.Controllers.v1
         }
 
         [HttpPut]
-        [Route("PutEditar")]
-        public async Task<IActionResult> PutAdicionar([FromBody] EditSalarioCommandView salarioCommand)
+        [Route("AtualizarAsync")]
+        public async Task<IActionResult> AtualizarAsync([FromBody] EditSalarioCommandView salarioCommand)
         {
             var salario = _mapper.Map<EditSalarioCommand>(salarioCommand);
             await _mediator.Send(salario);
@@ -72,8 +72,8 @@ namespace WebApi.DomainEvents.Controllers.v1
         }
 
         [HttpDelete]
-        [Route("Delete")]
-        public async Task<IActionResult> Delete([FromBody] DeleteSalarioCommandView salarioCommand)
+        [Route("DeletarAsync")]
+        public async Task<IActionResult> DeletarAsync([FromBody] DeleteSalarioCommandView salarioCommand)
         {
             var salario = _mapper.Map<DeleteSalarioCommand>(salarioCommand);
             await _mediator.Send(salario);

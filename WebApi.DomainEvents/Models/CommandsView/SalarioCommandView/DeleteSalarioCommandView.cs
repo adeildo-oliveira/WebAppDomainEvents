@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebApi.DomainEvents.Models
+namespace WebApi.DomainEvents.Models.CommandsView.SalarioCommandView
 {
     public class DeleteSalarioCommandView
     {

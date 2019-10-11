@@ -14,19 +14,20 @@ namespace Tests.Integration
 {
     public class DatabaseFixture : IDisposable
     {
-        public readonly DbContext Context = new DomainEventsContext();
+        public readonly DbContext Context;
         public readonly HttpClient _client;
-        private readonly TestServer server;
+        public readonly TestServer server;
 
         public DatabaseFixture()
         {
+            Context = new DomainEventsContext();
             server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
             _client = server.CreateClient();
         }
 
-        public async Task<T> Criar<T>(T entity) where T : class
+        public async Task<T> CriarAsync<T>(T entity) where T : class
         {
-            await Context.Set<T>().AddAsync(entity);
+            (await Context.Set<T>().AddAsync(entity)).Reload();
             await Context.SaveChangesAsync();
 
             return entity;
@@ -35,15 +36,12 @@ namespace Tests.Integration
         public async Task<T> BuscarAsync<T>(Expression<Func<T, bool>> predicate) where T : class => 
             await Context.Set<T>().AsNoTracking().Where(predicate).FirstOrDefaultAsync();
 
-        protected async Task<T> BuscarTodos<T>() where T : class =>
-            await Context.Set<T>().AsNoTracking().FirstOrDefaultAsync();
-
         public void ClearDataBase()
         {
             using (var db = new DomainEventsContext())
             {
                 db.Database.Migrate();
-                db.Database.ExecuteSqlCommand(Script);
+                _ = db.Database.ExecuteSqlCommand(Script);
             }
         }
 

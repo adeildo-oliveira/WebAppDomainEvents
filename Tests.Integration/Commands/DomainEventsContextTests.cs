@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using WebAppDomainEvents.Domain.Interfaces.Repository;
 using WebAppDomainEvents.Domain.Models;
@@ -10,19 +10,11 @@ using Xunit;
 
 namespace Tests.Integration.Commands
 {
-    public class DomainEventsContextTests : IClassFixture<IntegrationTestFixture>
+    public class DomainEventsContextTests : IntegrationTestFixture
     {
         private readonly ISalarioRepository _salarioRepository;
-        private readonly IntegrationTestFixture _fixture;
-        private readonly CancellationTokenSource source = new CancellationTokenSource();
 
-        public DomainEventsContextTests(IntegrationTestFixture fixture)
-        {
-            Task.Delay(1000, source.Token).Wait();
-            _fixture = fixture;
-            _salarioRepository = _fixture.Service.GetService<ISalarioRepository>();
-            _fixture.ClearDataBase();
-        }
+        public DomainEventsContextTests(DatabaseFixture fixture) : base(fixture) => _salarioRepository = Service.GetService<ISalarioRepository>();
 
         [Theory]
         [InlineData(1, 1)]
@@ -33,7 +25,7 @@ namespace Tests.Integration.Commands
         {
             var salario = new Salario(pagamento, adiantamento);
 
-            await _fixture.Criar(salario);
+            await _fixture.CriarAsync(salario);
             var resultado = await _salarioRepository.ObterSalarioPorIdAsync(salario.Id);
 
             resultado.Should().NotBeNull();
@@ -53,7 +45,7 @@ namespace Tests.Integration.Commands
             var despesaMensal = new DespesaMensal(descricao, valor, data)
                 .AdicionarSalario(salario);
 
-            await _fixture.Criar(despesaMensal);
+            await _fixture.CriarAsync(despesaMensal);
 
             var resultado = await _salarioRepository.ObterSalarioPorIdAsync(salario.Id);
             var resultadoDespesaMensal = resultado.DespesasMensais.FirstOrDefault();
@@ -69,12 +61,16 @@ namespace Tests.Integration.Commands
         public async Task DeveConsultarSalarioPorId()
         {
             var salario = new Salario(12345.55M, 54321.56M);
-            await _fixture.Criar(salario);
+
+            await _fixture.CriarAsync(salario);
 
             var resultado = await _salarioRepository.ObterSalarioPorIdAsync(salario.Id);
             
             resultado.Should().NotBeNull();
-            salario.Should().BeEquivalentTo(resultado);
+            salario.Id.Should().Be(resultado.Id);
+            salario.Pagamento.Should().Be(resultado.Pagamento);
+            salario.Adiantamento.Should().Be(resultado.Adiantamento);
+            salario.Status.Should().Be(resultado.Status);
         }
 
         [Fact]
@@ -83,9 +79,9 @@ namespace Tests.Integration.Commands
             var salario1 = new Salario(2857.02M, 3178.62M);
             var salario2 = new Salario(2857.00M, 3178.00M);
             var salario3 = new Salario(12345.55M, 54321.56M);
-            await _fixture.Criar(salario1);
-            await _fixture.Criar(salario2);
-            await _fixture.Criar(salario3);
+            await _fixture.CriarAsync(salario1);
+            await _fixture.CriarAsync(salario2);
+            await _fixture.CriarAsync(salario3);
 
             var resultado = await _salarioRepository.ObterSalarioAsync();
             

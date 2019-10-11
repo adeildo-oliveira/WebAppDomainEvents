@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using WebAppDomainEvents.Domain.Commands.SalarioCommand;
 using WebAppDomainEvents.Domain.Interfaces.Repository;
@@ -12,22 +11,17 @@ using Xunit;
 
 namespace Tests.Integration.Commands
 {
-    public class EditSalarioCommandHandlerTests : IClassFixture<IntegrationTestFixture>
+    public class EditSalarioCommandHandlerTests : IntegrationTestFixture
     {
         private readonly IMediator _mediator;
         private readonly ISalarioRepository _salarioRepository;
         private readonly DomainNotificationHandler _notifications;
-        private readonly IntegrationTestFixture _fixture;
-        private readonly CancellationTokenSource source = new CancellationTokenSource();
 
-        public EditSalarioCommandHandlerTests(IntegrationTestFixture fixture)
+        public EditSalarioCommandHandlerTests(DatabaseFixture fixture) : base(fixture)
         {
-            Task.Delay(5500, source.Token).Wait();
-            _fixture = fixture;
-            _mediator = _fixture.Service.GetService<IMediator>();
-            _salarioRepository = _fixture.Service.GetService<ISalarioRepository>();
-            _notifications = (DomainNotificationHandler)_fixture.Service.GetService<INotificationHandler<DomainNotification>>();
-            _fixture.ClearDataBase();
+            _mediator = Service.GetService<IMediator>();
+            _salarioRepository = Service.GetService<ISalarioRepository>();
+            _notifications = (DomainNotificationHandler)Service.GetService<INotificationHandler<DomainNotification>>();
         }
 
         [Fact]
@@ -49,7 +43,7 @@ namespace Tests.Integration.Commands
         public async Task DeveEditarUmSalario()
         {
             var salario = new Salario(12345.88M, 9875.00M);
-            await _fixture.Criar(salario);
+            await _fixture.CriarAsync(salario);
 
             var command = new EditSalarioCommand
             {

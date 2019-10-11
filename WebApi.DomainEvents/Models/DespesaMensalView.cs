@@ -9,6 +9,14 @@ namespace WebApi.DomainEvents.Models
         public decimal Valor { get; set; }
         public DateTime Data { get; set; }
         public bool Status { get; set; }
-        public SalarioView SalarioView { get; set; }
+        public DespesaSalarioView Salario { get; set; }
+    }
+
+    public class DespesaSalarioView
+    {
+        public Guid Id { get; set; }
+        public decimal Pagamento { get; set; }
+        public decimal Adiantamento { get; set; }
+        public bool Status { get; set; }
     }
 }

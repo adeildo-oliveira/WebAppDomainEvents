@@ -6,13 +6,20 @@ namespace WebAppDomainEvents.Domain.Models
 {
     public class Salario : Entity
     {
-        public Salario() { }
+        protected Salario() { }
 
         public Salario(decimal pagamento, decimal adiantamento)
         {
             Pagamento = pagamento;
             Adiantamento = adiantamento;
-            DespesasMensais = new List<DespesaMensal>();
+        }
+
+        public Salario(Guid id, decimal pagamento, decimal adiantamento, bool status)
+        {
+            Id = id;
+            Pagamento = pagamento;
+            Adiantamento = adiantamento;
+            Status = status;
         }
 
         public decimal Pagamento { get; private set; }
@@ -34,7 +41,9 @@ namespace WebAppDomainEvents.Domain.Models
 
         public virtual Salario AdicionarDespesaMensal(DespesaMensal despesaMensal)
         {
-            if(!DespesasMensais.Any(x => x.Id == despesaMensal?.Id))
+            DespesasMensais = DespesasMensais ?? new List<DespesaMensal>();
+
+            if (!DespesasMensais.Any(x => x.Id == despesaMensal?.Id))
                 DespesasMensais.Add(despesaMensal);
 
             return this;

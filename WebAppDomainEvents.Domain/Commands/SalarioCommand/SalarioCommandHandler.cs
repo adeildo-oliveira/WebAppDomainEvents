@@ -15,8 +15,7 @@ namespace WebAppDomainEvents.Domain.Commands.SalarioCommand
     {
         private readonly ISalarioRepository _salarioRepository;
 
-        public SalarioCommandHandler(IMediator mediator, ISalarioRepository salarioRepository) 
-            : base(mediator) => _salarioRepository = salarioRepository;
+        public SalarioCommandHandler(IMediator mediator, ISalarioRepository salarioRepository) : base(mediator) => _salarioRepository = salarioRepository;
 
         public async Task<bool> Handle(AddSalarioCommand command, CancellationToken cancellationToken)
         {
@@ -56,9 +55,7 @@ namespace WebAppDomainEvents.Domain.Commands.SalarioCommand
 
             if (resultado != null)
                 await _salarioRepository.RemoverSalarioAsync(
-                    new Salario(resultado.Pagamento, resultado.Adiantamento)
-                    .AtualizarId(command.Id)
-                    .AtualizarStatus(command.Status));
+                    new Salario(resultado.Pagamento, resultado.Adiantamento).AtualizarId(command.Id).AtualizarStatus(command.Status));
 
             return await Task.FromResult(true);
         }
