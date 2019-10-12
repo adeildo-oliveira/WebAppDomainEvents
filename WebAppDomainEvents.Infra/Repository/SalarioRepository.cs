@@ -12,35 +12,40 @@ namespace WebAppDomainEvents.Infra.Repository
     public class SalarioRepository : ContextSave, ISalarioRepository
     {
         private readonly DomainEventsContext _context;
+        protected readonly DbSet<Salario> DbSet;
 
-        public SalarioRepository(DomainEventsContext context) : base(context) => _context = context;
+        public SalarioRepository(DomainEventsContext context) : base(context)
+        {
+            _context = context;
+            DbSet = _context.Set<Salario>();
+        }
 
         public virtual async Task AdicionarSalarioAsync(Salario salario)
         {
-            await _context.Set<Salario>().AddAsync(salario);
+            await DbSet.AddAsync(salario);
             await CommitAsync();
         }
 
         public virtual async Task EditarSalarioAsync(Salario salario)
         {
-            _context.Attach(salario);
-            _context.Set<Salario>().Update(salario).State = EntityState.Modified;
+            DbSet.Attach(salario);
+            DbSet.Update(salario).State = EntityState.Modified;
             await CommitAsync();
         }
 
         public virtual async Task RemoverSalarioAsync(Salario salario)
         {
-            _context.Set<Salario>().Update(salario);
+            DbSet.Attach(salario);
+            DbSet.Update(salario).State = EntityState.Modified;
             await CommitAsync();
         }
 
-        public virtual async Task<Salario> ObterSalarioPorIdAsync(Guid id) => await _context.Set<Salario>()
+        public virtual async Task<Salario> ObterSalarioPorIdAsync(Guid id) => await DbSet
             .Include(x => x.DespesasMensais)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id && x.Status == true);
 
-        public virtual async Task<IReadOnlyCollection<Salario>> ObterSalarioAsync() => 
-            await _context.Set<Salario>()
+        public virtual async Task<IReadOnlyCollection<Salario>> ObterSalarioAsync() => await DbSet
             .Include(x => x.DespesasMensais)
             .Where(x => x.Status == true)
             .AsNoTracking()
