@@ -9,12 +9,11 @@ namespace WebApi.DomainEvents.AutoMapper
         public DomainToViewModelMappingProfile()
         {
             CreateMap<Salario, SalarioView>()
-                .ForMember(d => d.DespesasMensaisView, opt => opt.MapFrom(src => src.DespesasMensais));
-
-            CreateMap<Salario, DespesaSalarioView>();
+                .ForMember(d => d.DespesasMensais, opt => opt.MapFrom(src => src.DespesasMensais));
 
             CreateMap<DespesaMensal, DespesaMensalView>()
                 .ForMember(d => d.Salario, opt => opt.MapFrom(src => src.Salario));
+            CreateMap<Salario, DespesaSalarioView>();
         }
     }
 }
