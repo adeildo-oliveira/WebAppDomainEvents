@@ -19,9 +19,9 @@ namespace Tests.Integration.Commands
 
         public EditSalarioCommandHandlerTests(DatabaseFixture fixture) : base(fixture)
         {
-            _mediator = Service.GetService<IMediator>();
-            _salarioRepository = Service.GetService<ISalarioRepository>();
-            _notifications = (DomainNotificationHandler)Service.GetService<INotificationHandler<DomainNotification>>();
+            _mediator = _fixture.Server.Services.GetService<IMediator>();
+            _salarioRepository = _fixture.Server.Services.GetService<ISalarioRepository>();
+            _notifications = (DomainNotificationHandler)_fixture.Server.Services.GetService<INotificationHandler<DomainNotification>>();
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace Tests.Integration.Commands
             _notifications.HasNotifications().Should().BeTrue();
             _notifications.GetNotifications().Should().HaveCount(3);
 
-            var resultadoBusca = await _salarioRepository.ObterSalarioAsync();
+            var resultadoBusca = await _salarioRepository.GetAllAsync();
             resultadoBusca.FirstOrDefault().Should().BeNull();
         }
 
@@ -53,7 +53,7 @@ namespace Tests.Integration.Commands
             };
 
             var resultado = await _mediator.Send(command);
-            var resultadoBusca = await _salarioRepository.ObterSalarioPorIdAsync(command.Id);
+            var resultadoBusca = await _salarioRepository.GetByIdAsync(command.Id);
             resultado.Should().BeTrue();
             resultadoBusca.Should().NotBeNull();
             resultadoBusca.Pagamento.Should().Be(command.Pagamento);

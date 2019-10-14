@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Unit", "Tests.Unit\Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Integration", "Tests.Integration\Tests.Integration.csproj", "{4462DC3D-AE1B-4DAC-9321-338F91197DE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.DomainEvents", "WebApi.DomainEvents\WebApi.DomainEvents.csproj", "{8807057D-AB59-4FEA-A914-F8ECCF158E1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.DomainEvents", "WebApi.DomainEvents\WebApi.DomainEvents.csproj", "{8807057D-AB59-4FEA-A914-F8ECCF158E1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

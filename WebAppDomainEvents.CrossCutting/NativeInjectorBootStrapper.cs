@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using WebAppDomainEvents.Domain.Interfaces.Repository;
@@ -12,6 +14,12 @@ namespace WebAppDomainEvents.CrossCutting
     {
         public static void RegisterServices(IServiceCollection services)
         {
+            services.AddControllers();
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture("pt-BR");
+            });
+
             DomainServices(services);
             InfraServices(services);
         }
@@ -21,6 +29,7 @@ namespace WebAppDomainEvents.CrossCutting
             services.AddScoped<DomainEventsContext>();
             services.AddScoped<ISalarioRepository, SalarioRepository>();
             services.AddScoped<ISalarioRepositoryReadOnly, SalarioRepositoryReadOnly>();
+            services.AddScoped<IDespesaMensalRepository, DespesaMensalRepository>();
             services.AddScoped<IDespesaMensalRepositoryReadOnly, DespesaMensalRepositoryReadOnly>();
         }
 

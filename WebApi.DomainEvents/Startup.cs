@@ -18,7 +18,9 @@ namespace WebApi.DomainEvents
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddAutoMapper(AppDomain.CurrentDomain.Load("WebApi.DomainEvents"));
+            NativeInjectorBootStrapper.RegisterServices(services);
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -31,20 +33,7 @@ namespace WebApi.DomainEvents
                         Name = "Equipe interna"
                     }
                 });
-                c.SwaggerDoc("v2", new OpenApiInfo
-                {
-                    Title = "POC Domain Events",
-                    Version = "v2",
-                    Contact = new OpenApiContact
-                    {
-                        Email = "teste@noemail.com",
-                        Name = "Equipe interna"
-                    }
-                });
             });
-
-            services.AddAutoMapper(AppDomain.CurrentDomain.Load("WebApi.DomainEvents"));
-            NativeInjectorBootStrapper.RegisterServices(services);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -65,7 +54,6 @@ namespace WebApi.DomainEvents
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-                c.SwaggerEndpoint("/swagger/v2/swagger.json", "API V2");
             });
         }
     }

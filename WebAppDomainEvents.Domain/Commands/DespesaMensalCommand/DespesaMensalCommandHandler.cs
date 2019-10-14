@@ -15,26 +15,33 @@ namespace WebAppDomainEvents.Domain.Commands.DespesaMensalCommand
         IDisposable
     {
         private readonly ISalarioRepository _salarioRepository;
+        private readonly IDespesaMensalRepository _despesaMensalRepository;
 
-        public DespesaMensalCommandHandler(IMediator mediator, ISalarioRepository salarioRepository) : base(mediator) => _salarioRepository = salarioRepository;
+        public DespesaMensalCommandHandler(IMediator mediator
+            , ISalarioRepository salarioRepository
+            , IDespesaMensalRepository despesaMensalRepository) : base(mediator)
+        {
+            _salarioRepository = salarioRepository;
+            _despesaMensalRepository = despesaMensalRepository;
+        }
 
         public async Task<bool> Handle(AddDespesaMensalCommand command, CancellationToken cancellationToken)
         {
             if (!command.IsValid())
             {
                 await ReturnValidationErrors(command);
-                return await Task.FromResult(false);
+                return false;
             }
 
-            var salario = await _salarioRepository.ObterSalarioPorIdAsync(command.IdSalario);
+            var salario = await _salarioRepository.GetByIdAsync(command.IdSalario, cancellationToken);
 
             if(salario != null)
             {
-                salario.AdicionarDespesaMensal(new DespesaMensal(command.Descricao, command.Valor, command.Data));
-                await _salarioRepository.EditarSalarioAsync(salario);
+                var despesaMensal = new DespesaMensal(command.Descricao, command.Valor, command.Data).AdicionarSalario(salario);
+                await _despesaMensalRepository.AddAsync(despesaMensal, cancellationToken);
             }
 
-            return await Task.FromResult(true);
+            return true;
         }
 
         public async Task<bool> Handle(EditDespesaMensalCommand command, CancellationToken cancellationToken)
@@ -45,13 +52,15 @@ namespace WebAppDomainEvents.Domain.Commands.DespesaMensalCommand
                 return await Task.FromResult(false);
             }
 
-            var salario = await _salarioRepository.ObterSalarioPorIdAsync(command.IdSalario);
+            var salario = await _salarioRepository.GetByIdAsync(command.IdSalario, cancellationToken);
             var despesaMensal = salario?.DespesasMensais.FirstOrDefault(x => x.Id == command.Id);
             
             if(despesaMensal != null)
             {
-                despesaMensal.AtualizarDespesaMensal(command.Descricao, command.Valor, command.Data);
-                await _salarioRepository.EditarSalarioAsync(salario);
+                despesaMensal
+                    .AtualizarDespesaMensal(command.Descricao, command.Valor, command.Data)
+                    .AdicionarSalario(salario);
+                await _despesaMensalRepository.UpdateAsync(despesaMensal, cancellationToken);
             }
 
             return await Task.FromResult(true);
@@ -65,13 +74,15 @@ namespace WebAppDomainEvents.Domain.Commands.DespesaMensalCommand
                 return await Task.FromResult(false);
             }
 
-            var salario = await _salarioRepository.ObterSalarioPorIdAsync(command.IdSalario);
+            var salario = await _salarioRepository.GetByIdAsync(command.IdSalario, cancellationToken);
             var despesaMensal = salario?.DespesasMensais.FirstOrDefault(x => x.Id == command.Id);
 
             if (despesaMensal != null)
             {
-                despesaMensal.AtualizarDespesaMensal(command.Status);
-                await _salarioRepository.EditarSalarioAsync(salario);
+                despesaMensal
+                    .AtualizarDespesaMensal(command.Status)
+                    .AdicionarSalario(salario);
+                await _despesaMensalRepository.DeleteAsync(despesaMensal, cancellationToken);
             }
 
             return await Task.FromResult(true);

@@ -18,9 +18,9 @@ namespace Tests.Integration.Commands
 
         public AddSalarioCommandHandlerTests(DatabaseFixture fixture) : base(fixture)
         {
-            _mediator = Service.GetService<IMediator>();
-            _salarioRepository = Service.GetService<ISalarioRepository>();
-            _notifications = (DomainNotificationHandler)Service.GetService<INotificationHandler<DomainNotification>>();
+            _mediator = _fixture.Server.Services.GetService<IMediator>();
+            _salarioRepository = _fixture.Server.Services.GetService<ISalarioRepository>();
+            _notifications = (DomainNotificationHandler)_fixture.Server.Services.GetService<INotificationHandler<DomainNotification>>();
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace Tests.Integration.Commands
             _notifications.HasNotifications().Should().BeTrue();
             _notifications.GetNotifications().Should().HaveCount(2);
 
-            var resultadoBusca = await _salarioRepository.ObterSalarioAsync();
+            var resultadoBusca = await _salarioRepository.GetAllAsync();
             resultadoBusca.FirstOrDefault().Should().BeNull();
         }
 
@@ -53,7 +53,7 @@ namespace Tests.Integration.Commands
             _notifications.HasNotifications().Should().BeFalse();
             _notifications.GetNotifications().Should().HaveCount(0);
 
-            var resultadoBusca = (await _salarioRepository.ObterSalarioAsync()).FirstOrDefault(x => x.Pagamento == command.Pagamento);
+            var resultadoBusca = (await _salarioRepository.GetAllAsync()).FirstOrDefault(x => x.Pagamento == command.Pagamento);
             resultadoBusca.Should().NotBeNull();
             resultadoBusca.Pagamento.Should().Be(command.Pagamento);
             resultadoBusca.Adiantamento.Should().Be(command.Adiantamento);

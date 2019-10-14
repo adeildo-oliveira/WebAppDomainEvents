@@ -15,8 +15,8 @@ namespace Tests.Integration.DomainEventsReadOnly
 
         public SalarioRepositoryReadOnlyTests(DatabaseFixture fixture) : base(fixture)
         {
-            _salarioRepository = Service.GetService<ISalarioRepositoryReadOnly>();
-            _repository = Service.GetService<ISalarioRepository>();
+            _salarioRepository = _fixture.Server.Services.GetService<ISalarioRepositoryReadOnly>();
+            _repository = _fixture.Server.Services.GetService<ISalarioRepository>();
         }
 
         [Fact]
@@ -26,9 +26,9 @@ namespace Tests.Integration.DomainEventsReadOnly
             var salario2 = new Salario(1800.55M, 4000.89M);
             var salario3 = new Salario(2000.55M, 5000.89M);
 
-            await _repository.AdicionarSalarioAsync(salario1);
-            await _repository.AdicionarSalarioAsync(salario2);
-            await _repository.AdicionarSalarioAsync(salario3);
+            await _repository.AddAsync(salario1);
+            await _repository.AddAsync(salario2);
+            await _repository.AddAsync(salario3);
 
             var resultado = await _salarioRepository.ObterSalariosAsync();
 
@@ -46,9 +46,9 @@ namespace Tests.Integration.DomainEventsReadOnly
             var salario2 = new Salario(1800.55M, 4000.89M);
             var salario3 = new Salario(2000.55M, 5000.89M);
 
-            await _repository.AdicionarSalarioAsync(salario1);
-            await _repository.AdicionarSalarioAsync(salario2);
-            await _repository.AdicionarSalarioAsync(salario3);
+            await _repository.AddAsync(salario1);
+            await _repository.AddAsync(salario2);
+            await _repository.AddAsync(salario3);
 
             var resultado = await _salarioRepository.ObterSalarioPorIdAsync(salario1.Id);
 

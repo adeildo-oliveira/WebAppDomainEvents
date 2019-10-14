@@ -2,8 +2,7 @@
 
 namespace WebAppDomainEvents.Domain.Interfaces.Repository
 {
-    public interface ISalarioRepository : IRepositoryBase<Salario>
+    public interface IDespesaMensalRepository : IRepositoryBase<DespesaMensal>
     {
-        
     }
 }

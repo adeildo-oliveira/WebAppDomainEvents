@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,6 +14,8 @@ namespace WebAppDomainEvents.Infra.Repository
 {
     public class DespesaMensalRepositoryReadOnly : DomainEventsContextDapper, IDespesaMensalRepositoryReadOnly
     {
+        public DespesaMensalRepositoryReadOnly(IHostingEnvironment env) : base(env) { }
+
         public async Task<DespesaMensal> ObterDespesaMensalPorIdAsync(Guid id)
         {
             using (var conn = Connection)

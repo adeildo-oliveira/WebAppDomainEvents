@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using WebAppDomainEvents.Domain.Models;
@@ -8,10 +9,13 @@ namespace WebAppDomainEvents.Infra.Context
 {
     public class DomainEventsContext : DbContext
     {
+        private readonly IHostingEnvironment _env;
         public DbSet<Salario> Salario { get; set; }
         public DbSet<DespesaMensal> DespesaMensal { get; set; }
 
         public DomainEventsContext() { }
+
+        public DomainEventsContext(IHostingEnvironment env) => _env = env;
 
         public DomainEventsContext(DbContextOptions<DomainEventsContext> options)
             : base(options) { }
@@ -28,7 +32,7 @@ namespace WebAppDomainEvents.Infra.Context
         {
             optionsBuilder.UseSqlServer(new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile(_env.IsDevelopment() ? "appsettings.Development.json" : "appsettings.json", optional: true, reloadOnChange: true)
                 .Build()
                 .GetConnectionString("ApiConnection"));
         }

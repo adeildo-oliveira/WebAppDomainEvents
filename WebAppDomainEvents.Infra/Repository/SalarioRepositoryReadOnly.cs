@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,6 +13,8 @@ namespace WebAppDomainEvents.Infra.Repository
 {
     public class SalarioRepositoryReadOnly : DomainEventsContextDapper, ISalarioRepositoryReadOnly
     {
+        public SalarioRepositoryReadOnly(IHostingEnvironment env) : base(env) { }
+
         public async Task<IReadOnlyCollection<Salario>> ObterSalariosAsync()
         {
             using (var conn = Connection)

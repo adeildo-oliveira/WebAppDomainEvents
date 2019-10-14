@@ -12,7 +12,7 @@ using WebAppDomainEvents.Domain.Notifications;
 
 namespace WebApi.DomainEvents.Controllers.v1
 {
-    [Route("api/[controller]")]
+    [Route("v1/api/[controller]")]
     [ApiController]
     public class DespesaMensalController : BaseApiController
     {
@@ -46,7 +46,7 @@ namespace WebApi.DomainEvents.Controllers.v1
         public async Task<IActionResult> ObterPorIdAsync(Guid id)
         {
             var despesaMensal = await _repository.ObterDespesaMensalPorIdAsync(id);
-            var despesaMensalView = _mapper.Map<IReadOnlyCollection<DespesaMensalView>>(despesaMensal);
+            var despesaMensalView = _mapper.Map<DespesaMensalView>(despesaMensal);
 
             return Response(despesaMensalView);
         }

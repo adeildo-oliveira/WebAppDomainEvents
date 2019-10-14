@@ -14,7 +14,7 @@ namespace Tests.Integration.DomainEventsReadOnly
         private readonly IDespesaMensalRepositoryReadOnly _despesaMensalRepository;
 
         public DespesaMensalRepositoryReadOnlyTests(DatabaseFixture fixture) : base(fixture) => 
-            _despesaMensalRepository = Service.GetService<IDespesaMensalRepositoryReadOnly>();
+            _despesaMensalRepository = _fixture.Server.Services.GetService<IDespesaMensalRepositoryReadOnly>();
 
         [Fact]
         public async Task ObterDespesasMensaisRepositoryReadOnly()
