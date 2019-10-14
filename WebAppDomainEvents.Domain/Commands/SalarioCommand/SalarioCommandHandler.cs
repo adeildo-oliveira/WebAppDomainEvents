@@ -25,7 +25,7 @@ namespace WebAppDomainEvents.Domain.Commands.SalarioCommand
                 return await Task.FromResult(false);
             }
 
-            await _salarioRepository.AdicionarSalarioAsync(new Salario(command.Pagamento, command.Adiantamento));
+            await _salarioRepository.AddAsync(new Salario(command.Pagamento, command.Adiantamento));
             return await Task.FromResult(true);
         }
 
@@ -37,7 +37,7 @@ namespace WebAppDomainEvents.Domain.Commands.SalarioCommand
                 return await Task.FromResult(false);
             }
 
-            await _salarioRepository.EditarSalarioAsync(
+            await _salarioRepository.UpdateAsync(
                 new Salario(command.Pagamento, command.Adiantamento).AtualizarId(command.Id));
 
             return await Task.FromResult(true);
@@ -51,10 +51,10 @@ namespace WebAppDomainEvents.Domain.Commands.SalarioCommand
                 return await Task.FromResult(false);
             }
 
-            var resultado = await _salarioRepository.ObterSalarioPorIdAsync(command.Id);
+            var resultado = await _salarioRepository.GetByIdAsync(command.Id);
 
             if (resultado != null)
-                await _salarioRepository.RemoverSalarioAsync(
+                await _salarioRepository.DeleteAsync(
                     new Salario(resultado.Pagamento, resultado.Adiantamento).AtualizarId(command.Id).AtualizarStatus(command.Status));
 
             return await Task.FromResult(true);

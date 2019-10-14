@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +13,7 @@ namespace Tests.Integration.Commands
     {
         private readonly ISalarioRepository _salarioRepository;
 
-        public DomainEventsContextTests(DatabaseFixture fixture) : base(fixture) => _salarioRepository = Service.GetService<ISalarioRepository>();
+        public DomainEventsContextTests(DatabaseFixture fixture) : base(fixture) => _salarioRepository = _fixture.Server.Services.GetService<ISalarioRepository>();
 
         [Theory]
         [InlineData(1, 1)]
@@ -26,7 +25,7 @@ namespace Tests.Integration.Commands
             var salario = new Salario(pagamento, adiantamento);
 
             await _fixture.CriarAsync(salario);
-            var resultado = await _salarioRepository.ObterSalarioPorIdAsync(salario.Id);
+            var resultado = await _salarioRepository.GetByIdAsync(salario.Id);
 
             resultado.Should().NotBeNull();
             resultado.Pagamento.Should().Be(salario.Pagamento);
@@ -47,7 +46,7 @@ namespace Tests.Integration.Commands
 
             await _fixture.CriarAsync(despesaMensal);
 
-            var resultado = await _salarioRepository.ObterSalarioPorIdAsync(salario.Id);
+            var resultado = await _salarioRepository.GetByIdAsync(salario.Id);
             var resultadoDespesaMensal = resultado.DespesasMensais.FirstOrDefault();
 
             resultado.Should().NotBeNull();
@@ -64,7 +63,7 @@ namespace Tests.Integration.Commands
 
             await _fixture.CriarAsync(salario);
 
-            var resultado = await _salarioRepository.ObterSalarioPorIdAsync(salario.Id);
+            var resultado = await _salarioRepository.GetByIdAsync(salario.Id);
             
             resultado.Should().NotBeNull();
             salario.Id.Should().Be(resultado.Id);
@@ -83,7 +82,7 @@ namespace Tests.Integration.Commands
             await _fixture.CriarAsync(salario2);
             await _fixture.CriarAsync(salario3);
 
-            var resultado = await _salarioRepository.ObterSalarioAsync();
+            var resultado = await _salarioRepository.GetAllAsync();
             
             resultado.Should().NotBeNull();
             resultado.Should().HaveCount(3);

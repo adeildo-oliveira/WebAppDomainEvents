@@ -49,7 +49,7 @@ namespace Tests.Unit.Commands
             commandBuilder.ValidationResult.Errors.Should().HaveCount(2);
             commandBuilder.IsValid().Should().BeFalse();
             _mocker.Verify<IMediator>(x => x.Publish(It.IsAny<DomainNotification>(), default), Times.Exactly(2));
-            _mocker.Verify<ISalarioRepository>(x => x.AdicionarSalarioAsync(It.IsAny<Salario>()), Times.Never);
+            _mocker.Verify<ISalarioRepository>(x => x.AddAsync(It.IsAny<Salario>(), default), Times.Never);
         }
 
         [Fact]
@@ -61,14 +61,14 @@ namespace Tests.Unit.Commands
                 .Instanciar();
             commandBuilder.IsValid();
 
-            _mocker.GetMock<ISalarioRepository>().Setup(x => x.AdicionarSalarioAsync(It.IsAny<Salario>()))
+            _mocker.GetMock<ISalarioRepository>().Setup(x => x.AddAsync(It.IsAny<Salario>(), default))
                 .Returns(Task.CompletedTask)
-                .Callback<Salario>((salario) => 
+                .Callback<Salario, CancellationToken>((objeto, token) =>
                 {
-                    salario.Id.Should().NotBeEmpty();
-                    salario.Pagamento.Should().Be(commandBuilder.Pagamento);
-                    salario.Adiantamento.Should().Be(commandBuilder.Adiantamento);
-                    salario.Status.Should().BeTrue();
+                    objeto.Id.Should().NotBeEmpty();
+                    objeto.Pagamento.Should().Be(commandBuilder.Pagamento);
+                    objeto.Adiantamento.Should().Be(commandBuilder.Adiantamento);
+                    objeto.Status.Should().BeTrue();
                 });
             _mocker.GetMock<IMediator>().Setup(x => x.Publish(It.IsAny<DomainNotification>(), default)).Returns(Task.CompletedTask);
 
@@ -76,7 +76,7 @@ namespace Tests.Unit.Commands
 
             resultado.Should().BeTrue();
             _mocker.Verify<IMediator>(x => x.Publish(It.IsAny<DomainNotification>(), default), Times.Never);
-            _mocker.Verify<ISalarioRepository>(x => x.AdicionarSalarioAsync(It.IsAny<Salario>()), Times.Once);
+            _mocker.Verify<ISalarioRepository>(x => x.AddAsync(It.IsAny<Salario>(), default), Times.Once);
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace Tests.Unit.Commands
 
             resultado.Should().BeFalse();
             _mocker.Verify<IMediator>(x => x.Publish(It.IsAny<DomainNotification>(), default), Times.Exactly(3));
-            _mocker.Verify<ISalarioRepository>(x => x.EditarSalarioAsync(It.IsAny<Salario>()), Times.Never);
+            _mocker.Verify<ISalarioRepository>(x => x.UpdateAsync(It.IsAny<Salario>(), default), Times.Never);
         }
 
         [Fact]
@@ -114,22 +114,22 @@ namespace Tests.Unit.Commands
             commandBuilder.IsValid();
 
             _mocker.GetMock<IMediator>().Setup(x => x.Publish(It.IsAny<DomainNotification>(), default)).Returns(Task.CompletedTask);
-            _mocker.GetMock<ISalarioRepository>().Setup(x => x.EditarSalarioAsync(It.IsAny<Salario>()))
+            _mocker.GetMock<ISalarioRepository>().Setup(x => x.UpdateAsync(It.IsAny<Salario>(), default))
                 .Returns(Task.CompletedTask)
-                .Callback<Salario>((salario) =>
+                .Callback<Salario, CancellationToken>((objeto, token) =>
                 {
-                    salario.Id.Should().NotBeEmpty();
-                    salario.Id.Should().Be(commandBuilder.Id);
-                    salario.Pagamento.Should().Be(commandBuilder.Pagamento);
-                    salario.Adiantamento.Should().Be(commandBuilder.Adiantamento);
-                    salario.Status.Should().BeTrue();
+                    objeto.Id.Should().NotBeEmpty();
+                    objeto.Id.Should().Be(commandBuilder.Id);
+                    objeto.Pagamento.Should().Be(commandBuilder.Pagamento);
+                    objeto.Adiantamento.Should().Be(commandBuilder.Adiantamento);
+                    objeto.Status.Should().BeTrue();
                 });
 
             var resultado = await _commandHandler.Handle(commandBuilder, default);
 
             resultado.Should().BeTrue();
             _mocker.Verify<IMediator>(x => x.Publish(It.IsAny<DomainNotification>(), default), Times.Never);
-            _mocker.Verify<ISalarioRepository>(x => x.EditarSalarioAsync(It.IsAny<Salario>()), Times.Once);
+            _mocker.Verify<ISalarioRepository>(x => x.UpdateAsync(It.IsAny<Salario>(), default), Times.Once);
         }
 
         [Fact]
@@ -156,8 +156,8 @@ namespace Tests.Unit.Commands
             commandBuilder.ValidationResult.Errors.Should().HaveCount(1);
             commandBuilder.IsValid().Should().BeFalse();
             _mocker.Verify<IMediator>(x => x.Publish(It.IsAny<DomainNotification>(), default), Times.Once);
-            _mocker.Verify<ISalarioRepository>(x => x.ObterSalarioPorIdAsync(It.IsAny<Guid>()), Times.Never);
-            _mocker.Verify<ISalarioRepository>(x => x.RemoverSalarioAsync(It.IsAny<Salario>()), Times.Never);
+            _mocker.Verify<ISalarioRepository>(x => x.GetByIdAsync(It.IsAny<Guid>(), default), Times.Never);
+            _mocker.Verify<ISalarioRepository>(x => x.DeleteAsync(It.IsAny<Salario>(), default), Times.Never);
         }
 
         [Fact]
@@ -172,24 +172,24 @@ namespace Tests.Unit.Commands
             var salarioRetorno = new Salario(decimal.One, decimal.One);
 
             _mocker.GetMock<IMediator>().Setup(x => x.Publish(It.IsAny<DomainNotification>(), default)).Returns(Task.CompletedTask);
-            _mocker.GetMock<ISalarioRepository>().Setup(x => x.ObterSalarioPorIdAsync(commandBuilder.Id)).ReturnsAsync(salarioRetorno);
-            _mocker.GetMock<ISalarioRepository>().Setup(x => x.RemoverSalarioAsync(It.IsAny<Salario>()))
+            _mocker.GetMock<ISalarioRepository>().Setup(x => x.GetByIdAsync(commandBuilder.Id, default)).ReturnsAsync(salarioRetorno);
+            _mocker.GetMock<ISalarioRepository>().Setup(x => x.DeleteAsync(It.IsAny<Salario>(), default))
                 .Returns(Task.CompletedTask)
-                .Callback<Salario>((salario) =>
+                .Callback<Salario, CancellationToken>((objeto, token) =>
                 {
-                    salario.Id.Should().NotBeEmpty();
-                    salario.Id.Should().Be(commandBuilder.Id);
-                    salario.Pagamento.Should().Be(salarioRetorno.Pagamento);
-                    salario.Adiantamento.Should().Be(salarioRetorno.Adiantamento);
-                    salario.Status.Should().BeFalse();
+                    objeto.Id.Should().NotBeEmpty();
+                    objeto.Id.Should().Be(commandBuilder.Id);
+                    objeto.Pagamento.Should().Be(salarioRetorno.Pagamento);
+                    objeto.Adiantamento.Should().Be(salarioRetorno.Adiantamento);
+                    objeto.Status.Should().BeFalse();
                 });
 
             var resultado = await _commandHandler.Handle(commandBuilder, default);
 
             resultado.Should().BeTrue();
             _mocker.Verify<IMediator>(x => x.Publish(It.IsAny<DomainNotification>(), default), Times.Never);
-            _mocker.Verify<ISalarioRepository>(x => x.ObterSalarioPorIdAsync(It.IsAny<Guid>()), Times.Once);
-            _mocker.Verify<ISalarioRepository>(x => x.RemoverSalarioAsync(It.IsAny<Salario>()), Times.Once);
+            _mocker.Verify<ISalarioRepository>(x => x.GetByIdAsync(It.IsAny<Guid>(), default), Times.Once);
+            _mocker.Verify<ISalarioRepository>(x => x.DeleteAsync(It.IsAny<Salario>(), default), Times.Once);
         }
     }
 }
