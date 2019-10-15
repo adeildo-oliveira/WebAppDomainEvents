@@ -23,3 +23,14 @@ docker run --name SQLServer2017 -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD={SENHA}
 ```
 
 * Como exemplo, deixei um usuário já configurado na connection string, caso queira, pode ser usado o mesmo usuário quando for realizada as devidas configurações no SQL Server.
+
+### No projeto, entrando na pasta aonde está o arquivo **Dockerfile**, executar os comandos abaixo:
+
+1. Buid da imagem:
+    ```
+    docker build -t api-domainevents .
+    ```
+2. Criação do container a partir da imagem:
+    ```
+    docker run -d -p 8080:80 --name api-events api-domainevents
+    ```
