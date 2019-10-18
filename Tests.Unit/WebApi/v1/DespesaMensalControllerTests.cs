@@ -15,6 +15,7 @@ using WebAppDomainEvents.Domain.Interfaces.Repository;
 using WebAppDomainEvents.Domain.Models;
 using WebAppDomainEvents.Domain.Notifications;
 using Xunit;
+using Serilog;
 
 namespace Tests.Unit.WebApi.v1
 {
@@ -26,6 +27,7 @@ namespace Tests.Unit.WebApi.v1
         private readonly Mock<IMediator> _mediatorMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IDespesaMensalRepositoryReadOnly> _repositoryMock;
+        private readonly Mock<ILogger> _loggerMock;
 
         public DespesaMensalControllerTests()
         {
@@ -34,8 +36,10 @@ namespace Tests.Unit.WebApi.v1
             _mediatorMock = _mocker.GetMock<IMediator>();
             _mapperMock = _mocker.GetMock<IMapper>();
             _repositoryMock = _mocker.GetMock<IDespesaMensalRepositoryReadOnly>();
+            _loggerMock = _mocker.GetMock<ILogger>();
 
             _controller = new DespesaMensalController(_notificationMock.Object,
+                _loggerMock.Object,
                 _mediatorMock.Object,
                 _mapperMock.Object,
                 _repositoryMock.Object);
