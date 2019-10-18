@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,10 +22,11 @@ namespace WebApi.DomainEvents.Controllers.v1
         private readonly IDespesaMensalRepositoryReadOnly _repository;
 
         public DespesaMensalController(INotificationHandler<DomainNotification> notifications
+            , ILogger logger
             , IMediator mediator
             , IMapper mapper
             , IDespesaMensalRepositoryReadOnly repository) 
-            : base(notifications)
+            : base(notifications, logger)
         {
             _mediator = mediator;
             _mapper = mapper;

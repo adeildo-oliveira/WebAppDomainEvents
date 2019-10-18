@@ -7,18 +7,32 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
 using WebAppDomainEvents.CrossCutting;
+using Serilog;
+using Serilog.Events;
+using System.IO;
 
 namespace WebApi.DomainEvents
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
 
-        public IConfiguration Configuration { get; }
+        public Startup(IWebHostEnvironment environment)
+        {
+            _environment = environment;
+
+            _configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile(_environment.IsDevelopment() ? "appsettings.Development.json" : "appsettings.json", optional: true, reloadOnChange: true)
+                .Build();
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(AppDomain.CurrentDomain.Load("WebApi.DomainEvents"));
+            services.AddSingleton<ILogger>(x => new LoggerConfiguration().ReadFrom.Configuration(_configuration).CreateLogger());
+            
             NativeInjectorBootStrapper.RegisterServices(services);
             
             services.AddSwaggerGen(c =>
@@ -36,13 +50,13 @@ namespace WebApi.DomainEvents
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (_environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
             app.UseRouting();
-
+            
             //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

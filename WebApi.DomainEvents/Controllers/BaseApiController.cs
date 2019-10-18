@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -11,8 +12,13 @@ namespace WebApi.DomainEvents.Controllers
     public abstract class BaseApiController : ControllerBase
     {
         private readonly DomainNotificationHandler _notifications;
+        protected readonly ILogger _logger;
 
-        protected BaseApiController(INotificationHandler<DomainNotification> notifications) => _notifications = (DomainNotificationHandler)notifications;
+        protected BaseApiController(INotificationHandler<DomainNotification> notifications, ILogger logger)
+        {
+            _notifications = (DomainNotificationHandler)notifications;
+            _logger = logger;
+        }
 
         protected IEnumerable<DomainNotification> Notifications => _notifications.GetNotifications();
 

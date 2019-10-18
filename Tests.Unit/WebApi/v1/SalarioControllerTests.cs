@@ -2,6 +2,7 @@
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using Moq;
 using Moq.AutoMock;
 using System;
@@ -26,6 +27,7 @@ namespace Tests.Unit.WebApi.v1
         private readonly Mock<IMediator> _mediatorMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<ISalarioRepositoryReadOnly> _repositoryMock;
+        private readonly Mock<ILogger> _loggerMock;
 
         public SalarioControllerTests()
         {
@@ -34,8 +36,10 @@ namespace Tests.Unit.WebApi.v1
             _mediatorMock = _mocker.GetMock<IMediator>();
             _mapperMock = _mocker.GetMock<IMapper>();
             _repositoryMock = _mocker.GetMock<ISalarioRepositoryReadOnly>();
+            _loggerMock = _mocker.GetMock<ILogger>();
 
             _controller = new SalarioController(_notificationMock.Object,
+                _loggerMock.Object,
                 _mediatorMock.Object,
                 _mapperMock.Object,
                 _repositoryMock.Object);
