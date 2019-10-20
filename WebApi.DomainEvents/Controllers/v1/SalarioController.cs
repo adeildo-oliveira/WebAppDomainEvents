@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using WebApi.DomainEvents.Models;
 using WebApi.DomainEvents.Models.CommandsView.SalarioCommandView;
 using WebAppDomainEvents.Domain.Commands.SalarioCommand;
 using WebAppDomainEvents.Domain.Interfaces.Repository;
 using WebAppDomainEvents.Domain.Notifications;
-using Serilog;
 
 namespace WebApi.DomainEvents.Controllers.v1
 {
@@ -40,17 +41,18 @@ namespace WebApi.DomainEvents.Controllers.v1
         {
             try
             {
-                _logger.Information(messageTemplate: $"{ROTA_LOGUE}/ObterAsync - OBTENDO OS DADOS DA BASE");
+                _logger.Information($"[SalarioController] OBTENDO OS DADOS DA BASE :: {ROTA_LOGUE}/ObterAsync");
                 var salario = await _repository.ObterSalariosAsync();
                 var salarioView = _mapper.Map<IReadOnlyCollection<SalarioView>>(salario);
-                _logger.Information(messageTemplate: $"{ROTA_LOGUE}/ObterAsync - RETORNO DA CONSULTA");
-
-                return Response(salarioView);
+                _logger.Information($"[SalarioController] RETORNO DA CONSULTA :: {ROTA_LOGUE}/ObterAsync");
+                
+                return salarioView.Count > 0 ? Response(salarioView) : Response(salarioView, HttpStatusCode.NotFound);
             }
             catch (Exception erro)
             {
-                _logger.Error(erro.Message, erro);
-                return Response("Erro ao processar a requisição");
+                _logger.Error(erro, erro.Message);
+                NotifyError("500", "[SalarioController] Erro ao processar a requisição");
+                return Response(statusCode: HttpStatusCode.InternalServerError);
             }
         }
 
@@ -58,48 +60,84 @@ namespace WebApi.DomainEvents.Controllers.v1
         [Route("ObterPorIdAsync/{id:guid}")]
         public async Task<IActionResult> ObterPorIdAsync(Guid id)
         {
-            _logger.Information(messageTemplate: $"{ROTA_LOGUE}/ObterPorIdAsync/{id} - OBTENDO OS DADOS DA BASE");
-            var salario = await _repository.ObterSalarioPorIdAsync(id);
-            var salarioView = _mapper.Map<SalarioView>(salario);
-            _logger.Information(messageTemplate: $"{ROTA_LOGUE}/ObterPorIdAsync/{id} - RETORNO DA CONSULTA");
+            try
+            {
+                _logger.Information($"[SalarioController] OBTENDO OS DADOS DA BASE :: {ROTA_LOGUE}/ObterPorIdAsync/{id}");
+                var salario = await _repository.ObterSalarioPorIdAsync(id);
+                var salarioView = _mapper.Map<SalarioView>(salario);
+                _logger.Information($"[SalarioController] RETORNO DA CONSULTA :: {ROTA_LOGUE}/ObterPorIdAsync/{id}");
 
-            return Response(salarioView);
+                return salarioView != null ? Response(salarioView) : Response(salarioView, HttpStatusCode.NotFound);
+            }
+            catch (Exception erro)
+            {
+                _logger.Error(erro, erro.Message);
+                NotifyError("500", "[SalarioController] Erro ao processar a requisição");
+                return Response(statusCode: HttpStatusCode.InternalServerError);
+            }
         }
 
         [HttpPost]
         [Route("AdicionarAsync")]
         public async Task<IActionResult> AdicionarAsync([FromBody] AddSalarioCommandView salarioCommand)
         {
-            _logger.Information(messageTemplate: $"{ROTA_LOGUE}/AdicionarAsync - INICIANDO A EXECUAÇÃO DO CADASTRO", propertyValue: salarioCommand);
-            var salario = _mapper.Map<AddSalarioCommand>(salarioCommand);
-            await _mediator.Send(salario);
-            _logger.Information(messageTemplate: $"{ROTA_LOGUE}/AdicionarAsync - FIM DA EXECUÇÃO DO CADASTRO", propertyValue: salarioCommand);
+            try
+            {
+                _logger.Information($"[SalarioController] INICIANDO A EXECUAÇÃO DO CADASTRO :: {ROTA_LOGUE}/AdicionarAsync");
+                var salario = _mapper.Map<AddSalarioCommand>(salarioCommand);
+                var sucess = await _mediator.Send(salario);
+                _logger.Information($"[SalarioController] FIM DA EXECUÇÃO DO CADASTRO :: {ROTA_LOGUE}/AdicionarAsync");
 
-            return Response("Salário adicionado com sucesso.");
+                return sucess ? Response("Salário adicionado com sucesso.") : Response(statusCode: HttpStatusCode.BadRequest);
+            }
+            catch (Exception erro)
+            {
+                _logger.Error(erro, erro.Message);
+                NotifyError("500", "[SalarioController] Erro ao processar a requisição");
+                return Response(statusCode: HttpStatusCode.InternalServerError);
+            }
         }
 
         [HttpPut]
         [Route("AtualizarAsync")]
         public async Task<IActionResult> AtualizarAsync([FromBody] EditSalarioCommandView salarioCommand)
         {
-            _logger.Information(messageTemplate: $"{ROTA_LOGUE}/AtualizarAsync - INICIANDO A EXECUAÇÃO DE EDIÇÃO");
-            var salario = _mapper.Map<EditSalarioCommand>(salarioCommand);
-            await _mediator.Send(salario);
-            _logger.Information(messageTemplate: $"{ROTA_LOGUE}/AtualizarAsync - FIM DA EXECUAÇÃO DE EDIÇÃO");
+            try
+            {
+                _logger.Information($"[SalarioController] INICIANDO A EXECUAÇÃO DE EDIÇÃO :: {ROTA_LOGUE}/AtualizarAsync");
+                var salario = _mapper.Map<EditSalarioCommand>(salarioCommand);
+                var sucess = await _mediator.Send(salario);
+                _logger.Information($"[SalarioController] FIM DA EXECUAÇÃO DE EDIÇÃO :: {ROTA_LOGUE}/AtualizarAsync");
 
-            return Response("Salário atualizado com sucesso.");
+                return sucess ? Response("Salário atualizado com sucesso.") : Response(statusCode: HttpStatusCode.BadRequest);
+            }
+            catch (Exception erro)
+            {
+                _logger.Error(erro, erro.Message);
+                NotifyError("500", "[SalarioController] Erro ao processar a requisição");
+                return Response(statusCode: HttpStatusCode.InternalServerError);
+            }
         }
 
         [HttpDelete]
         [Route("DeletarAsync")]
         public async Task<IActionResult> DeletarAsync([FromBody] DeleteSalarioCommandView salarioCommand)
         {
-            _logger.Information(messageTemplate: $"{ROTA_LOGUE}/DeletarAsync - INICIANDO A EXECUAÇÃO DE EXCLUSÃO");
-            var salario = _mapper.Map<DeleteSalarioCommand>(salarioCommand);
-            await _mediator.Send(salario);
-            _logger.Information(messageTemplate: $"{ROTA_LOGUE}/AtualizarAsync - FIM DA EXECUAÇÃO DE EXCLUSÃO");
+            try
+            {
+                _logger.Information($"[SalarioController] INICIANDO A EXECUAÇÃO DE EXCLUSÃO :: {ROTA_LOGUE}/DeletarAsync");
+                var salario = _mapper.Map<DeleteSalarioCommand>(salarioCommand);
+                var sucess = await _mediator.Send(salario);
+                _logger.Information($"[SalarioController] FIM DA EXECUAÇÃO DE EXCLUSÃO :: {ROTA_LOGUE}/AtualizarAsync");
 
-            return Response("Salário excluído com sucesso.");
+                return sucess ? Response("Salário excluído com sucesso.") : Response(statusCode: HttpStatusCode.BadRequest);
+            }
+            catch (Exception erro)
+            {
+                _logger.Error(erro, erro.Message);
+                NotifyError("500", "[SalarioController] Erro ao processar a requisição");
+                return Response(statusCode: HttpStatusCode.InternalServerError);
+            }
         }
     }
 }

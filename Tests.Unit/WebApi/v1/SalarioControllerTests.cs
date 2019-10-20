@@ -2,9 +2,9 @@
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 using Moq;
 using Moq.AutoMock;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -46,49 +46,82 @@ namespace Tests.Unit.WebApi.v1
         }
 
         [Fact]
-        public async Task ObterSalario()
+        public async Task ObterSalarioNotResult()
         {
             var salarios = new Mock<IReadOnlyCollection<Salario>>().Object;
-            var salariosView = new Mock<IReadOnlyCollection<SalarioView>>().Object;
+            IReadOnlyCollection<SalarioView> salariosView = new List<SalarioView>();
 
             _repositoryMock.Setup(x => x.ObterSalariosAsync()).ReturnsAsync(salarios);
             _mapperMock.Setup(x => x.Map<IReadOnlyCollection<SalarioView>>(salarios)).Returns(salariosView);
             
-            var viewResult = (await _controller.ObterAsync()) as OkObjectResult;
-            
-            viewResult.Should().BeOfType<OkObjectResult>();
+            var viewResult = (await _controller.ObterAsync()) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(404);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task ObterSalarioPorId()
+        public async Task ObterSalarioOkResult()
+        {
+            var salarios = new Mock<IReadOnlyCollection<Salario>>().Object;
+            IReadOnlyCollection<SalarioView> salariosView = new List<SalarioView> { new SalarioView() };
+
+            _repositoryMock.Setup(x => x.ObterSalariosAsync()).ReturnsAsync(salarios);
+            _mapperMock.Setup(x => x.Map<IReadOnlyCollection<SalarioView>>(salarios)).Returns(salariosView);
+            
+            var viewResult = (await _controller.ObterAsync()) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(200);
+            viewResult.Should().BeOfType<ObjectResult>();
+        }
+
+        [Fact]
+        public async Task ObterSalarioPorIdNotFound()
         {
             var salario = new Mock<Salario>().Object;
-            var salarioView = new Mock<SalarioView>().Object;
+
+            _repositoryMock.Setup(x => x.ObterSalarioPorIdAsync(It.IsAny<Guid>())).ReturnsAsync(salario);
+            _mapperMock.Setup(x => x.Map<SalarioView>(salario)).Returns(It.IsAny<SalarioView>());
+
+            var viewResult = (await _controller.ObterPorIdAsync(It.IsAny<Guid>())) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(404);
+            viewResult.Should().BeOfType<ObjectResult>();
+        }
+
+        [Fact]
+        public async Task ObterSalarioPorIdOkResult()
+        {
+            var salario = new Mock<Salario>().Object;
+            var salarioView = new SalarioView();
 
             _repositoryMock.Setup(x => x.ObterSalarioPorIdAsync(It.IsAny<Guid>())).ReturnsAsync(salario);
             _mapperMock.Setup(x => x.Map<SalarioView>(salario)).Returns(salarioView);
 
-            var viewResult = (await _controller.ObterPorIdAsync(It.IsAny<Guid>())) as OkObjectResult;
+            var viewResult = (await _controller.ObterPorIdAsync(It.IsAny<Guid>())) as ObjectResult;
 
-            viewResult.Should().BeOfType<OkObjectResult>();
+            viewResult.StatusCode.Should().Be(200);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task PostDeveAdicionarSalario()
+        public async Task PostDeveAdicionarSalarioOkResult()
         {
             var model = new AddSalarioCommandView { Adiantamento = decimal.One, Pagamento = decimal.One};
             var addSalarioCommand = new AddSalarioCommand { Adiantamento = decimal.One, Pagamento = decimal.One };
 
             _notificationMock.Setup(x => x.HasNotifications()).Returns(false);
             _mapperMock.Setup(x => x.Map<AddSalarioCommand>(model)).Returns(addSalarioCommand);
-            _mediatorMock.Setup(x => x.Send(addSalarioCommand, default)).ReturnsAsync(false);
+            _mediatorMock.Setup(x => x.Send(addSalarioCommand, default)).ReturnsAsync(true);
 
-            var viewResult = (await _controller.AdicionarAsync(model)) as OkObjectResult;
-            viewResult.Should().BeOfType<OkObjectResult>();
+            var viewResult = (await _controller.AdicionarAsync(model)) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(200);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task PostNaoDeveAdicionarSalario()
+        public async Task PostNaoDeveAdicionarSalarioBadRequest()
         {
             var model = new AddSalarioCommandView();
             var addSalarioCommand = new AddSalarioCommand();
@@ -97,12 +130,14 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<AddSalarioCommand>(model)).Returns(addSalarioCommand);
             _mediatorMock.Setup(x => x.Send(addSalarioCommand, default)).ReturnsAsync(false);
 
-            var viewResult = (await _controller.AdicionarAsync(model)) as BadRequestObjectResult;
-            viewResult.Should().BeOfType<BadRequestObjectResult>();
+            var viewResult = (await _controller.AdicionarAsync(model)) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(400);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task PutDeveEditarSalario()
+        public async Task PutDeveEditarSalarioOkResult()
         {
             var model = new EditSalarioCommandView 
             {
@@ -119,14 +154,16 @@ namespace Tests.Unit.WebApi.v1
 
             _notificationMock.Setup(x => x.HasNotifications()).Returns(false);
             _mapperMock.Setup(x => x.Map<EditSalarioCommand>(model)).Returns(salarioCommand);
-            _mediatorMock.Setup(x => x.Send(salarioCommand, default)).ReturnsAsync(false);
+            _mediatorMock.Setup(x => x.Send(salarioCommand, default)).ReturnsAsync(true);
 
-            var viewResult = (await _controller.AtualizarAsync(model)) as OkObjectResult;
-            viewResult.Should().BeOfType<OkObjectResult>();
+            var viewResult = (await _controller.AtualizarAsync(model)) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(200);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task PutNaoDeveEditarSalario()
+        public async Task PutNaoDeveEditarSalarioBadRequest()
         {
             var model = new EditSalarioCommandView();
             var salarioCommand = new EditSalarioCommand();
@@ -135,12 +172,14 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<EditSalarioCommand>(model)).Returns(salarioCommand);
             _mediatorMock.Setup(x => x.Send(salarioCommand, default)).ReturnsAsync(false);
 
-            var viewResult = (await _controller.AtualizarAsync(model)) as BadRequestObjectResult;
-            viewResult.Should().BeOfType<BadRequestObjectResult>();
+            var viewResult = (await _controller.AtualizarAsync(model)) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(400);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task DeleteDeveExcluirSalario()
+        public async Task DeleteDeveExcluirSalarioOkResult()
         {
             var model = new DeleteSalarioCommandView
             {
@@ -155,14 +194,16 @@ namespace Tests.Unit.WebApi.v1
 
             _notificationMock.Setup(x => x.HasNotifications()).Returns(false);
             _mapperMock.Setup(x => x.Map<DeleteSalarioCommand>(model)).Returns(salarioCommand);
-            _mediatorMock.Setup(x => x.Send(salarioCommand, default)).ReturnsAsync(false);
+            _mediatorMock.Setup(x => x.Send(salarioCommand, default)).ReturnsAsync(true);
 
-            var viewResult = (await _controller.DeletarAsync(model)) as OkObjectResult;
-            viewResult.Should().BeOfType<OkObjectResult>();
+            var viewResult = (await _controller.DeletarAsync(model)) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(200);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task DeleteNaoDeveExcluirSalario()
+        public async Task DeleteNaoDeveExcluirSalarioBadRequest()
         {
             var model = new DeleteSalarioCommandView();
             var salarioCommand = new DeleteSalarioCommand();
@@ -171,8 +212,10 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<DeleteSalarioCommand>(model)).Returns(salarioCommand);
             _mediatorMock.Setup(x => x.Send(salarioCommand, default)).ReturnsAsync(false);
 
-            var viewResult = (await _controller.DeletarAsync(model)) as BadRequestObjectResult;
-            viewResult.Should().BeOfType<BadRequestObjectResult>();
+            var viewResult = (await _controller.DeletarAsync(model)) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(400);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
     }
 }
