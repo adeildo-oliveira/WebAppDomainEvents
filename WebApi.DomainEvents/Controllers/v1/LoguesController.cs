@@ -12,7 +12,7 @@ namespace WebApi.DomainEvents.Controllers.v1
     [ApiController]
     public class LoguesController : ControllerBase
     {
-        private ILogueMongodb<LogueView> _logs;
+        private readonly ILogueMongodb<LogueView> _logs;
         public LoguesController(ILogueMongodb<LogueView> logs) => _logs = logs;
 
         [HttpGet]

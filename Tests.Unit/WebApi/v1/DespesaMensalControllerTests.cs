@@ -107,8 +107,8 @@ namespace Tests.Unit.WebApi.v1
         [Fact]
         public async Task DespesaMensalNaoAdicionarAsyncBadRequest()
         {
-            var commandModel = new Mock<AddDespesaMensalCommandView>().Object;
-            var command = new Mock<AddDespesaMensalCommand>().Object;
+            var commandModel = new AddDespesaMensalCommandView();
+            var command = new AddDespesaMensalCommand();
 
             _notificationMock.Setup(x => x.HasNotifications()).Returns(true);
             _mapperMock.Setup(x => x.Map<AddDespesaMensalCommand>(commandModel)).Returns(command);
@@ -184,8 +184,8 @@ namespace Tests.Unit.WebApi.v1
         [Fact]
         public async Task DespesaMensalNaoDeletarAsyncBadRequestResult()
         {
-            var commandModel = new Mock<DeleteDespesaMensalCommandView>().Object;
-            var command = new Mock<DeleteDespesaMensalCommand>().Object;
+            var commandModel = new DeleteDespesaMensalCommandView();
+            var command = new DeleteDespesaMensalCommand();
 
             _notificationMock.Setup(x => x.HasNotifications()).Returns(true);
             _mapperMock.Setup(x => x.Map<DeleteDespesaMensalCommand>(commandModel)).Returns(command);

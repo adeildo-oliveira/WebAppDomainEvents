@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace WebApi.DomainEvents.Controllers.v1
             , ILogger logger
             , IMediator mediator
             , IMapper mapper
-            , IDespesaMensalRepositoryReadOnly repository) 
+            , IDespesaMensalRepositoryReadOnly repository)
             : base(notifications, logger)
         {
             _mediator = mediator;
@@ -83,10 +84,10 @@ namespace WebApi.DomainEvents.Controllers.v1
         {
             try
             {
-                _logger.Information($"[DespesaMensalController] INICIANDO A EXECUAÇÃO DO CADASTRO :: {ROTA_LOGUE}/AdicionarAsync");
+                _logger.Information($"[DespesaMensalController] INICIANDO A EXECUAÇÃO DO CADASTRO :: {ROTA_LOGUE}/AdicionarAsync/{JsonConvert.SerializeObject(commandView)}");
                 var despesaMensal = _mapper.Map<AddDespesaMensalCommand>(commandView);
                 var sucess = await _mediator.Send(despesaMensal);
-                _logger.Information($"[DespesaMensalController] FIM DA EXECUÇÃO DO CADASTRO :: {ROTA_LOGUE}/AdicionarAsync");
+                _logger.Information("[DespesaMensalController] FIM DA EXECUÇÃO DO CADASTRO");
 
                 return sucess ? Response("Despesa mensal adicionado com sucesso.") : Response(statusCode: HttpStatusCode.BadRequest);
             }
@@ -104,10 +105,10 @@ namespace WebApi.DomainEvents.Controllers.v1
         {
             try
             {
-                _logger.Information($"[DespesaMensalController] INICIANDO A EXECUAÇÃO DE EDIÇÃO :: {ROTA_LOGUE}/AtualizarAsync");
+                _logger.Information($"[DespesaMensalController] INICIANDO A EXECUAÇÃO DE EDIÇÃO :: {ROTA_LOGUE}/AtualizarAsync/{JsonConvert.SerializeObject(commandView)}");
                 var despesaMensal = _mapper.Map<EditDespesaMensalCommand>(commandView);
                 var sucess = await _mediator.Send(despesaMensal);
-                _logger.Information($"[DespesaMensalController] FIM DA EXECUAÇÃO DE EDIÇÃO :: {ROTA_LOGUE}/AtualizarAsync");
+                _logger.Information("[DespesaMensalController] FIM DA EXECUAÇÃO DE EDIÇÃO");
 
                 return sucess ? Response("Despesa mensal atualizada com sucesso.") : Response(statusCode: HttpStatusCode.BadRequest);
             }
@@ -125,10 +126,10 @@ namespace WebApi.DomainEvents.Controllers.v1
         {
             try
             {
-                _logger.Information($"[DespesaMensalController] INICIANDO A EXECUAÇÃO DE EXCLUSÃO :: {ROTA_LOGUE}/DeletarAsync");
+                _logger.Information($"[DespesaMensalController] INICIANDO A EXECUAÇÃO DE EXCLUSÃO :: {ROTA_LOGUE}/DeletarAsync/{JsonConvert.SerializeObject(commandView)}");
                 var despesaMensal = _mapper.Map<DeleteDespesaMensalCommand>(commandView);
                 var sucess = await _mediator.Send(despesaMensal);
-                _logger.Information($"[DespesaMensalController] FIM DA EXECUAÇÃO DE EXCLUSÃO :: {ROTA_LOGUE}/AtualizarAsync");
+                _logger.Information("[DespesaMensalController] FIM DA EXECUAÇÃO DE EXCLUSÃO");
 
                 return sucess ? Response("Despesa mensal removida com sucesso.") : Response(statusCode: HttpStatusCode.BadRequest);
             }
