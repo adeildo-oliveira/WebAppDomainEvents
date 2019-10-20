@@ -13,7 +13,7 @@ namespace WebApi.DomainEvents.AutoMapper
             CreateMap<AddSalarioCommandView, AddSalarioCommand>();
             CreateMap<EditSalarioCommandView, EditSalarioCommand>();
             CreateMap<DeleteSalarioCommandView, DeleteSalarioCommand>();
-            
+
             CreateMap<AddDespesaMensalCommandView, AddDespesaMensalCommand>();
             CreateMap<EditDespesaMensalCommandView, EditDespesaMensalCommand>();
             CreateMap<DeleteDespesaMensalCommandView, DeleteDespesaMensalCommand>();

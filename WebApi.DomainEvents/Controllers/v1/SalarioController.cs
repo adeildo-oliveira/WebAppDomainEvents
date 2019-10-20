@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace WebApi.DomainEvents.Controllers.v1
             , ILogger logger
             , IMediator mediator
             , IMapper mapper
-            , ISalarioRepositoryReadOnly repository) 
+            , ISalarioRepositoryReadOnly repository)
             : base(notifications, logger)
         {
             _mediator = mediator;
@@ -45,7 +46,7 @@ namespace WebApi.DomainEvents.Controllers.v1
                 var salario = await _repository.ObterSalariosAsync();
                 var salarioView = _mapper.Map<IReadOnlyCollection<SalarioView>>(salario);
                 _logger.Information($"[SalarioController] RETORNO DA CONSULTA :: {ROTA_LOGUE}/ObterAsync");
-                
+
                 return salarioView.Count > 0 ? Response(salarioView) : Response(salarioView, HttpStatusCode.NotFound);
             }
             catch (Exception erro)
@@ -83,10 +84,10 @@ namespace WebApi.DomainEvents.Controllers.v1
         {
             try
             {
-                _logger.Information($"[SalarioController] INICIANDO A EXECUAÇÃO DO CADASTRO :: {ROTA_LOGUE}/AdicionarAsync");
+                _logger.Information($"[SalarioController] INICIANDO A EXECUAÇÃO DO CADASTRO :: {ROTA_LOGUE}/AdicionarAsync/{JsonConvert.SerializeObject(salarioCommand)}");
                 var salario = _mapper.Map<AddSalarioCommand>(salarioCommand);
                 var sucess = await _mediator.Send(salario);
-                _logger.Information($"[SalarioController] FIM DA EXECUÇÃO DO CADASTRO :: {ROTA_LOGUE}/AdicionarAsync");
+                _logger.Information("[SalarioController] FIM DA EXECUÇÃO DO CADASTRO");
 
                 return sucess ? Response("Salário adicionado com sucesso.") : Response(statusCode: HttpStatusCode.BadRequest);
             }
@@ -104,10 +105,10 @@ namespace WebApi.DomainEvents.Controllers.v1
         {
             try
             {
-                _logger.Information($"[SalarioController] INICIANDO A EXECUAÇÃO DE EDIÇÃO :: {ROTA_LOGUE}/AtualizarAsync");
+                _logger.Information($"[SalarioController] INICIANDO A EXECUAÇÃO DE EDIÇÃO :: {ROTA_LOGUE}/AtualizarAsync/{JsonConvert.SerializeObject(salarioCommand)}");
                 var salario = _mapper.Map<EditSalarioCommand>(salarioCommand);
                 var sucess = await _mediator.Send(salario);
-                _logger.Information($"[SalarioController] FIM DA EXECUAÇÃO DE EDIÇÃO :: {ROTA_LOGUE}/AtualizarAsync");
+                _logger.Information("[SalarioController] FIM DA EXECUAÇÃO DE EDIÇÃO");
 
                 return sucess ? Response("Salário atualizado com sucesso.") : Response(statusCode: HttpStatusCode.BadRequest);
             }
@@ -125,10 +126,10 @@ namespace WebApi.DomainEvents.Controllers.v1
         {
             try
             {
-                _logger.Information($"[SalarioController] INICIANDO A EXECUAÇÃO DE EXCLUSÃO :: {ROTA_LOGUE}/DeletarAsync");
+                _logger.Information($"[SalarioController] INICIANDO A EXECUAÇÃO DE EXCLUSÃO :: {ROTA_LOGUE}/DeletarAsync/{JsonConvert.SerializeObject(salarioCommand)}");
                 var salario = _mapper.Map<DeleteSalarioCommand>(salarioCommand);
                 var sucess = await _mediator.Send(salario);
-                _logger.Information($"[SalarioController] FIM DA EXECUAÇÃO DE EXCLUSÃO :: {ROTA_LOGUE}/AtualizarAsync");
+                _logger.Information("[SalarioController] FIM DA EXECUAÇÃO DE EXCLUSÃO");
 
                 return sucess ? Response("Salário excluído com sucesso.") : Response(statusCode: HttpStatusCode.BadRequest);
             }

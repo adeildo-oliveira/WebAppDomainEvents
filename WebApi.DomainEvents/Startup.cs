@@ -34,7 +34,7 @@ namespace WebApi.DomainEvents
         {
             services.AddAutoMapper(AppDomain.CurrentDomain.Load("WebApi.DomainEvents"));
             services.AddSingleton<ILogger>(x => new LoggerConfiguration().ReadFrom.Configuration(_configuration).CreateLogger());
-            
+
             MongoDbConfiguration(services);
             NativeInjectorBootStrapper.RegisterServices(services);
 
@@ -56,10 +56,12 @@ namespace WebApi.DomainEvents
         public void Configure(IApplicationBuilder app)
         {
             if (_environment.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
 
             app.UseRouting();
-            
+
             //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
