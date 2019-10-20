@@ -29,7 +29,7 @@ namespace WebAppDomainEvents.Infra.Repository
         {
             using (var conn = Connection)
             {
-                return await conn.QueryFirstAsync<Salario>(ScriptsSalarioReadOnly.QueryObterSalarioPorId,
+                return await conn.QueryFirstOrDefaultAsync<Salario>(ScriptsSalarioReadOnly.QueryObterSalarioPorId,
                     param: new
                     {
                         ID = id

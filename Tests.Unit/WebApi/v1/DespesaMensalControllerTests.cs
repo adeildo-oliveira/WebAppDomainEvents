@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Moq.AutoMock;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,7 +16,6 @@ using WebAppDomainEvents.Domain.Interfaces.Repository;
 using WebAppDomainEvents.Domain.Models;
 using WebAppDomainEvents.Domain.Notifications;
 using Xunit;
-using Serilog;
 
 namespace Tests.Unit.WebApi.v1
 {
@@ -46,35 +46,66 @@ namespace Tests.Unit.WebApi.v1
         }
 
         [Fact]
-        public async Task DespesaMensalObterDespesaMensalAsync()
+        public async Task DespesaMensalObterDespesaMensalAsyncOkResult()
         {
-            var despesaMensal = new Mock<IReadOnlyCollection<DespesaMensal>>().Object;
-            var despesaMensalView = new Mock<IReadOnlyCollection<DespesaMensalView>>().Object;
+            IReadOnlyCollection<DespesaMensal> despesaMensal = new List<DespesaMensal>();
+            IReadOnlyCollection<DespesaMensalView> despesaMensalView = new List<DespesaMensalView> { new DespesaMensalView() };
 
             _repositoryMock.Setup(x => x.ObterDespesasMensaisAsync()).ReturnsAsync(despesaMensal);
             _mapperMock.Setup(x => x.Map<IReadOnlyCollection<DespesaMensalView>>(despesaMensal)).Returns(despesaMensalView);
 
-            var viewResult = (await _controller.ObterAsync()) as OkObjectResult;
+            var viewResult = (await _controller.ObterAsync()) as ObjectResult;
 
-            viewResult.Should().BeOfType<OkObjectResult>();
+            viewResult.StatusCode.Should().Be(200);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task DespesaMensalObterDespesaMensalPorIdAsync()
+        public async Task DespesaMensalObterDespesaMensalAsyncNotFoundResult()
+        {
+            IReadOnlyCollection<DespesaMensal> despesaMensal = new List<DespesaMensal>();
+            IReadOnlyCollection<DespesaMensalView> despesaMensalView = new List<DespesaMensalView>();
+
+            _repositoryMock.Setup(x => x.ObterDespesasMensaisAsync()).ReturnsAsync(despesaMensal);
+            _mapperMock.Setup(x => x.Map<IReadOnlyCollection<DespesaMensalView>>(despesaMensal)).Returns(despesaMensalView);
+
+            var viewResult = (await _controller.ObterAsync()) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(404);
+            viewResult.Should().BeOfType<ObjectResult>();
+        }
+
+        [Fact]
+        public async Task DespesaMensalObterDespesaMensalPorIdAsyncOkResult()
         {
             var despesaMensal = new Mock<DespesaMensal>().Object;
-            var despesaMensalView = new Mock<DespesaMensalView>().Object;
+            var despesaMensalView = new DespesaMensalView();
 
             _repositoryMock.Setup(x => x.ObterDespesaMensalPorIdAsync(It.IsAny<Guid>())).ReturnsAsync(despesaMensal);
             _mapperMock.Setup(x => x.Map<DespesaMensalView>(despesaMensal)).Returns(despesaMensalView);
 
-            var viewResult = (await _controller.ObterAsync()) as OkObjectResult;
-
-            viewResult.Should().BeOfType<OkObjectResult>();
+            var viewResult = (await _controller.ObterPorIdAsync(It.IsAny<Guid>())) as ObjectResult;
+            
+            viewResult.StatusCode.Should().Be(200);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task DespesaMensalNaoAdicionarAsync()
+        public async Task DespesaMensalObterDespesaMensalPorIdAsyncNotFoundResult()
+        {
+            var despesaMensal = new Mock<DespesaMensal>().Object;
+
+            _repositoryMock.Setup(x => x.ObterDespesaMensalPorIdAsync(It.IsAny<Guid>())).ReturnsAsync(despesaMensal);
+            _mapperMock.Setup(x => x.Map<DespesaMensalView>(despesaMensal)).Returns(It.IsAny<DespesaMensalView>());
+
+            var viewResult = (await _controller.ObterPorIdAsync(It.IsAny<Guid>())) as ObjectResult;
+            
+            viewResult.StatusCode.Should().Be(404);
+            viewResult.Should().BeOfType<ObjectResult>();
+        }
+
+        [Fact]
+        public async Task DespesaMensalNaoAdicionarAsyncBadRequest()
         {
             var commandModel = new Mock<AddDespesaMensalCommandView>().Object;
             var command = new Mock<AddDespesaMensalCommand>().Object;
@@ -83,12 +114,14 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<AddDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(false);
 
-            var viewResult = (await _controller.AdicionarAsync(commandModel)) as BadRequestObjectResult;
-            viewResult.Should().BeOfType<BadRequestObjectResult>();
+            var viewResult = (await _controller.AdicionarAsync(commandModel)) as ObjectResult;
+            
+            viewResult.StatusCode.Should().Be(400);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task DespesaMensalAdicionarAsync()
+        public async Task DespesaMensalAdicionarAsyncOkResult()
         {
             var commandModel = new AddDespesaMensalCommandView
             {
@@ -103,32 +136,30 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<AddDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(true);
 
-            var viewResult = (await _controller.AdicionarAsync(commandModel)) as OkObjectResult;
-            viewResult.Should().BeOfType<OkObjectResult>();
+            var viewResult = (await _controller.AdicionarAsync(commandModel)) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(200);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task DespesaMensalNaoAtualizarAsync()
+        public async Task DespesaMensalNaoAtualizarAsyncBadRequest()
         {
-            var commandModel = new EditDespesaMensalCommandView
-            {
-                IdSalario = new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"),
-                Descricao = "Cartão de Crédito",
-                Valor = decimal.One,
-                Data = DateTime.Now
-            };
-            var command = new Mock<EditDespesaMensalCommand>().Object;
+            var commandModel = new EditDespesaMensalCommandView();
+            var command = new EditDespesaMensalCommand();
 
             _notificationMock.Setup(x => x.HasNotifications()).Returns(true);
             _mapperMock.Setup(x => x.Map<EditDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(false);
 
-            var viewResult = (await _controller.AtualizarAsync(commandModel)) as BadRequestObjectResult;
-            viewResult.Should().BeOfType<BadRequestObjectResult>();
+            var viewResult = (await _controller.AtualizarAsync(commandModel)) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(400);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task DespesaMensalAtualizarAsync()
+        public async Task DespesaMensalAtualizarAsyncOkResult()
         {
             var commandModel = new EditDespesaMensalCommandView
             {
@@ -144,12 +175,14 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<EditDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(true);
 
-            var viewResult = (await _controller.AtualizarAsync(commandModel)) as OkObjectResult;
-            viewResult.Should().BeOfType<OkObjectResult>();
+            var viewResult = (await _controller.AtualizarAsync(commandModel)) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(200);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task DespesaMensalNaoDeletarAsync()
+        public async Task DespesaMensalNaoDeletarAsyncBadRequestResult()
         {
             var commandModel = new Mock<DeleteDespesaMensalCommandView>().Object;
             var command = new Mock<DeleteDespesaMensalCommand>().Object;
@@ -158,12 +191,14 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<DeleteDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(false);
 
-            var viewResult = (await _controller.DeletarAsync(commandModel)) as BadRequestObjectResult;
-            viewResult.Should().BeOfType<BadRequestObjectResult>();
+            var viewResult = (await _controller.DeletarAsync(commandModel)) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(400);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]
-        public async Task DespesaMensalDeletarAsync()
+        public async Task DespesaMensalDeletarAsyncOkResult()
         {
             var commandModel = new DeleteDespesaMensalCommandView
             {
@@ -171,14 +206,16 @@ namespace Tests.Unit.WebApi.v1
                 IdSalario = new Guid("10AFDB5E-D7D1-4773-B040-F7B6F610484F"),
                 Status = false
             };
-            var command = new Mock<DeleteDespesaMensalCommand>().Object;
+            var command = new DeleteDespesaMensalCommand();
 
             _notificationMock.Setup(x => x.HasNotifications()).Returns(false);
             _mapperMock.Setup(x => x.Map<DeleteDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(true);
 
-            var viewResult = (await _controller.DeletarAsync(commandModel)) as OkObjectResult;
-            viewResult.Should().BeOfType<OkObjectResult>();
+            var viewResult = (await _controller.DeletarAsync(commandModel)) as ObjectResult;
+
+            viewResult.StatusCode.Should().Be(200);
+            viewResult.Should().BeOfType<ObjectResult>();
         }
     }
 }

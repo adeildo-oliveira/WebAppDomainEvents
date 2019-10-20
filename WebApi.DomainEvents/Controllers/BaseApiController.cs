@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Serilog;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,22 +25,26 @@ namespace WebApi.DomainEvents.Controllers
 
         protected bool IsValidOperation() => !_notifications.HasNotifications();
 
-        protected new IActionResult Response(object result = null)
+        protected new IActionResult Response(object result = null, HttpStatusCode statusCode = HttpStatusCode.OK)
         {
             if (IsValidOperation())
             {
-                return Ok(new
+                _logger.Information($"RESULTADO :: {JsonConvert.SerializeObject(result)}");
+                return StatusCode((int)statusCode, new
                 {
                     resultado = result,
-                    StatusCode = (int)HttpStatusCode.OK
+                    StatusCode = (int)statusCode
                 });
             }
 
-            return BadRequest(new ResponseMensage
+            var responseMensage = new ResponseMensage
             {
                 Mensagem = _notifications.GetNotifications().Select(n => n.Value),
-                StatusCode = (int)HttpStatusCode.BadRequest
-            });
+                StatusCode = (int)statusCode
+            };
+
+            _logger.Information($"VALIDAÇÕES :: {JsonConvert.SerializeObject(responseMensage)}");
+            return StatusCode((int)statusCode, responseMensage);
         }
 
         protected void NotifyModelStateErrors()

@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using System;
-using WebAppDomainEvents.CrossCutting;
 using Serilog;
-using Serilog.Events;
+using System;
 using System.IO;
+using WebAppDomainEvents.CrossCutting;
+using WebAppDomainEvents.Domain.Interfaces.Repository.Logue;
+using WebAppDomainEvents.Infra.Repository.Logue;
 
 namespace WebApi.DomainEvents
 {
@@ -33,8 +35,9 @@ namespace WebApi.DomainEvents
             services.AddAutoMapper(AppDomain.CurrentDomain.Load("WebApi.DomainEvents"));
             services.AddSingleton<ILogger>(x => new LoggerConfiguration().ReadFrom.Configuration(_configuration).CreateLogger());
             
+            MongoDbConfiguration(services);
             NativeInjectorBootStrapper.RegisterServices(services);
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -69,6 +72,13 @@ namespace WebApi.DomainEvents
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
             });
+        }
+
+        private void MongoDbConfiguration(IServiceCollection services)
+        {
+            services.Configure<LogueDatabaseSettings>(_configuration.GetSection("MongoConnectionString"));
+            services.AddSingleton<ILogueDatabaseSettings>(sp => sp.GetRequiredService<IOptions<LogueDatabaseSettings>>().Value);
+            services.AddSingleton(typeof(ILogueMongodb<>), typeof(LogueMongodb<>));
         }
     }
 }
