@@ -21,13 +21,7 @@ namespace WebApi.DomainEvents.Controllers
             _logger = logger;
         }
 
-        protected IEnumerable<DomainNotification> Notifications
-        {
-            get
-            {
-                return _notifications.GetNotifications();
-            }
-        }
+        protected IEnumerable<DomainNotification> Notifications => _notifications.GetNotifications();
 
         protected bool IsValidOperation() => !_notifications.HasNotifications();
 
@@ -38,14 +32,14 @@ namespace WebApi.DomainEvents.Controllers
                 _logger.Information($"RESULTADO :: {JsonConvert.SerializeObject(result)}");
                 return StatusCode((int)statusCode, new
                 {
-                    resultado = result,
+                    result,
                     StatusCode = (int)statusCode
                 });
             }
 
             var responseMensage = new ResponseMensage
             {
-                Mensagem = _notifications.GetNotifications().Select(n => n.Value),
+                Mensagens = _notifications.GetNotifications(),
                 StatusCode = (int)statusCode
             };
 
@@ -68,7 +62,7 @@ namespace WebApi.DomainEvents.Controllers
 
     partial class ResponseMensage
     {
-        public object Mensagem { get; set; }
+        public object Mensagens { get; set; }
         public int StatusCode { get; set; }
     }
 }

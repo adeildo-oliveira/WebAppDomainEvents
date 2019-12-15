@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,6 +36,14 @@ namespace WebApi.DomainEvents
             services.AddAutoMapper(AppDomain.CurrentDomain.Load("WebApi.DomainEvents"));
             services.AddSingleton<ILogger>(x => new LoggerConfiguration().ReadFrom.Configuration(_configuration).CreateLogger());
 
+            services.AddCors(o => o.AddPolicy("Local", builder =>
+            {
+                builder.WithOrigins("http://localhost:3000")
+                       .AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
             MongoDbConfiguration(services);
             NativeInjectorBootStrapper.RegisterServices(services);
 
@@ -59,6 +68,11 @@ namespace WebApi.DomainEvents
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors("Local");
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             app.UseRouting();
 
