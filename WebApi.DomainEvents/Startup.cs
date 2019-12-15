@@ -45,8 +45,8 @@ namespace WebApi.DomainEvents
             }));
 
             MongoDbConfiguration(services);
-            NativeInjectorBootStrapper.RegisterServices(services);
-
+            
+            services.RegisterServices();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -65,9 +65,8 @@ namespace WebApi.DomainEvents
         public void Configure(IApplicationBuilder app)
         {
             if (_environment.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
+
             app.UseCors("Local");
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

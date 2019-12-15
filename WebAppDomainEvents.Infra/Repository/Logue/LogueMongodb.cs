@@ -5,7 +5,7 @@ namespace WebAppDomainEvents.Infra.Repository.Logue
 {
     public class LogueMongodb<T> : ILogueMongodb<T> where T : class
     {
-        private IMongoCollection<T> _mongoCollection;
+        private readonly IMongoCollection<T> _mongoCollection;
 
         public LogueMongodb(ILogueDatabaseSettings settings)
         {
