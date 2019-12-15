@@ -66,6 +66,7 @@ namespace WebApi.DomainEvents
         {
             if (_environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
+            }
 
             app.UseCors("Local");
             app.UseForwardedHeaders(new ForwardedHeadersOptions

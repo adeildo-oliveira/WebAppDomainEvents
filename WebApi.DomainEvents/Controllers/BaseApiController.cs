@@ -21,7 +21,13 @@ namespace WebApi.DomainEvents.Controllers
             _logger = logger;
         }
 
-        protected IEnumerable<DomainNotification> Notifications => _notifications.GetNotifications();
+        protected IEnumerable<DomainNotification> Notifications
+        {
+            get
+            {
+                return _notifications.GetNotifications();
+            }
+        }
 
         protected bool IsValidOperation() => !_notifications.HasNotifications();
 
