@@ -45,7 +45,7 @@ namespace WebApi.DomainEvents
             }));
 
             MongoDbConfiguration(services);
-            
+
             services.RegisterServices();
             services.AddSwaggerGen(c =>
             {
@@ -66,7 +66,6 @@ namespace WebApi.DomainEvents
         {
             if (_environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
-            }
 
             app.UseCors("Local");
             app.UseForwardedHeaders(new ForwardedHeadersOptions
