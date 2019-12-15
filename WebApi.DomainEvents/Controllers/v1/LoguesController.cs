@@ -16,8 +16,8 @@ namespace WebApi.DomainEvents.Controllers.v1
         public LoguesController(ILogueMongodb<LogueView> logs) => _logs = logs;
 
         [HttpGet]
-        [Route("ObterAsync")]
-        public async Task<IActionResult> ObterAsync()
+        [Route("GetAsync")]
+        public async Task<IActionResult> GetAsync()
         {
             try
             {
@@ -31,8 +31,8 @@ namespace WebApi.DomainEvents.Controllers.v1
         }
 
         [HttpGet]
-        [Route("ObterAsync/{level}")]
-        public async Task<IActionResult> ObterAsync(string level)
+        [Route("GetAsync/{level}")]
+        public async Task<IActionResult> GetAsync(string level)
         {
             try
             {
@@ -46,8 +46,8 @@ namespace WebApi.DomainEvents.Controllers.v1
         }
 
         [HttpDelete]
-        [Route("DeletarTodosAsync")]
-        public async Task<IActionResult> DeletarTodosAsync()
+        [Route("DeleteAllAsync")]
+        public async Task<IActionResult> DeleteAllAsync()
         {
             try
             {

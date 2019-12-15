@@ -37,8 +37,8 @@ namespace WebApi.DomainEvents.Controllers.v1
         }
 
         [HttpGet]
-        [Route("ObterAsync")]
-        public async Task<IActionResult> ObterAsync()
+        [Route("GetAsync")]
+        public async Task<IActionResult> GetAsync()
         {
             try
             {
@@ -58,8 +58,8 @@ namespace WebApi.DomainEvents.Controllers.v1
         }
 
         [HttpGet]
-        [Route("ObterPorIdAsync/{id:guid}")]
-        public async Task<IActionResult> ObterPorIdAsync(Guid id)
+        [Route("GetByIdAsync/{id:guid}")]
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             try
             {
@@ -79,8 +79,8 @@ namespace WebApi.DomainEvents.Controllers.v1
         }
 
         [HttpPost]
-        [Route("AdicionarAsync")]
-        public async Task<IActionResult> AdicionarAsync([FromBody] AddDespesaMensalCommandView commandView)
+        [Route("PostAsync")]
+        public async Task<IActionResult> PostAsync([FromBody] AddDespesaMensalCommandView commandView)
         {
             try
             {
@@ -100,8 +100,8 @@ namespace WebApi.DomainEvents.Controllers.v1
         }
 
         [HttpPut]
-        [Route("AtualizarAsync")]
-        public async Task<IActionResult> AtualizarAsync([FromBody] EditDespesaMensalCommandView commandView)
+        [Route("PutAsync")]
+        public async Task<IActionResult> PutAsync([FromBody] EditDespesaMensalCommandView commandView)
         {
             try
             {
@@ -121,8 +121,8 @@ namespace WebApi.DomainEvents.Controllers.v1
         }
 
         [HttpDelete]
-        [Route("DeletarAsync")]
-        public async Task<IActionResult> DeletarAsync([FromBody] DeleteDespesaMensalCommandView commandView)
+        [Route("DeleteAsync")]
+        public async Task<IActionResult> DeleteAsync([FromBody] DeleteDespesaMensalCommandView commandView)
         {
             try
             {

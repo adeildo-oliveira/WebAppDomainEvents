@@ -54,7 +54,7 @@ namespace Tests.Unit.WebApi.v1
             _repositoryMock.Setup(x => x.ObterDespesasMensaisAsync()).ReturnsAsync(despesaMensal);
             _mapperMock.Setup(x => x.Map<IReadOnlyCollection<DespesaMensalView>>(despesaMensal)).Returns(despesaMensalView);
 
-            var viewResult = (await _controller.ObterAsync()) as ObjectResult;
+            var viewResult = (await _controller.GetAsync()) as ObjectResult;
 
             viewResult.StatusCode.Should().Be(200);
             viewResult.Should().BeOfType<ObjectResult>();
@@ -69,7 +69,7 @@ namespace Tests.Unit.WebApi.v1
             _repositoryMock.Setup(x => x.ObterDespesasMensaisAsync()).ReturnsAsync(despesaMensal);
             _mapperMock.Setup(x => x.Map<IReadOnlyCollection<DespesaMensalView>>(despesaMensal)).Returns(despesaMensalView);
 
-            var viewResult = (await _controller.ObterAsync()) as ObjectResult;
+            var viewResult = (await _controller.GetAsync()) as ObjectResult;
 
             viewResult.StatusCode.Should().Be(404);
             viewResult.Should().BeOfType<ObjectResult>();
@@ -84,7 +84,7 @@ namespace Tests.Unit.WebApi.v1
             _repositoryMock.Setup(x => x.ObterDespesaMensalPorIdAsync(It.IsAny<Guid>())).ReturnsAsync(despesaMensal);
             _mapperMock.Setup(x => x.Map<DespesaMensalView>(despesaMensal)).Returns(despesaMensalView);
 
-            var viewResult = (await _controller.ObterPorIdAsync(It.IsAny<Guid>())) as ObjectResult;
+            var viewResult = (await _controller.GetByIdAsync(It.IsAny<Guid>())) as ObjectResult;
             
             viewResult.StatusCode.Should().Be(200);
             viewResult.Should().BeOfType<ObjectResult>();
@@ -98,7 +98,7 @@ namespace Tests.Unit.WebApi.v1
             _repositoryMock.Setup(x => x.ObterDespesaMensalPorIdAsync(It.IsAny<Guid>())).ReturnsAsync(despesaMensal);
             _mapperMock.Setup(x => x.Map<DespesaMensalView>(despesaMensal)).Returns(It.IsAny<DespesaMensalView>());
 
-            var viewResult = (await _controller.ObterPorIdAsync(It.IsAny<Guid>())) as ObjectResult;
+            var viewResult = (await _controller.GetByIdAsync(It.IsAny<Guid>())) as ObjectResult;
             
             viewResult.StatusCode.Should().Be(404);
             viewResult.Should().BeOfType<ObjectResult>();
@@ -114,7 +114,7 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<AddDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(false);
 
-            var viewResult = (await _controller.AdicionarAsync(commandModel)) as ObjectResult;
+            var viewResult = (await _controller.PostAsync(commandModel)) as ObjectResult;
             
             viewResult.StatusCode.Should().Be(400);
             viewResult.Should().BeOfType<ObjectResult>();
@@ -136,7 +136,7 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<AddDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(true);
 
-            var viewResult = (await _controller.AdicionarAsync(commandModel)) as ObjectResult;
+            var viewResult = (await _controller.PostAsync(commandModel)) as ObjectResult;
 
             viewResult.StatusCode.Should().Be(200);
             viewResult.Should().BeOfType<ObjectResult>();
@@ -152,7 +152,7 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<EditDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(false);
 
-            var viewResult = (await _controller.AtualizarAsync(commandModel)) as ObjectResult;
+            var viewResult = (await _controller.PutAsync(commandModel)) as ObjectResult;
 
             viewResult.StatusCode.Should().Be(400);
             viewResult.Should().BeOfType<ObjectResult>();
@@ -175,7 +175,7 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<EditDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(true);
 
-            var viewResult = (await _controller.AtualizarAsync(commandModel)) as ObjectResult;
+            var viewResult = (await _controller.PutAsync(commandModel)) as ObjectResult;
 
             viewResult.StatusCode.Should().Be(200);
             viewResult.Should().BeOfType<ObjectResult>();
@@ -191,7 +191,7 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<DeleteDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(false);
 
-            var viewResult = (await _controller.DeletarAsync(commandModel)) as ObjectResult;
+            var viewResult = (await _controller.DeleteAsync(commandModel)) as ObjectResult;
 
             viewResult.StatusCode.Should().Be(400);
             viewResult.Should().BeOfType<ObjectResult>();
@@ -212,7 +212,7 @@ namespace Tests.Unit.WebApi.v1
             _mapperMock.Setup(x => x.Map<DeleteDespesaMensalCommand>(commandModel)).Returns(command);
             _mediatorMock.Setup(x => x.Send(command, default)).ReturnsAsync(true);
 
-            var viewResult = (await _controller.DeletarAsync(commandModel)) as ObjectResult;
+            var viewResult = (await _controller.DeleteAsync(commandModel)) as ObjectResult;
 
             viewResult.StatusCode.Should().Be(200);
             viewResult.Should().BeOfType<ObjectResult>();

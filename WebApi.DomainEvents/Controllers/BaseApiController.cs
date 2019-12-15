@@ -38,14 +38,14 @@ namespace WebApi.DomainEvents.Controllers
                 _logger.Information($"RESULTADO :: {JsonConvert.SerializeObject(result)}");
                 return StatusCode((int)statusCode, new
                 {
-                    resultado = result,
+                    result,
                     StatusCode = (int)statusCode
                 });
             }
 
             var responseMensage = new ResponseMensage
             {
-                Mensagem = _notifications.GetNotifications().Select(n => n.Value),
+                Mensagens = _notifications.GetNotifications(),
                 StatusCode = (int)statusCode
             };
 
@@ -68,7 +68,7 @@ namespace WebApi.DomainEvents.Controllers
 
     partial class ResponseMensage
     {
-        public object Mensagem { get; set; }
+        public object Mensagens { get; set; }
         public int StatusCode { get; set; }
     }
 }

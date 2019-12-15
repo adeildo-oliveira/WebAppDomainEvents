@@ -10,9 +10,9 @@ using WebAppDomainEvents.Infra.Repository;
 
 namespace WebAppDomainEvents.CrossCutting
 {
-    public class NativeInjectorBootStrapper
+    public static class NativeInjectorBootStrapper
     {
-        public static void RegisterServices(IServiceCollection services)
+        public static void RegisterServices(this IServiceCollection services)
         {
             services.AddControllers();
             services.Configure<RequestLocalizationOptions>(options =>
@@ -20,11 +20,11 @@ namespace WebAppDomainEvents.CrossCutting
                 options.DefaultRequestCulture = new RequestCulture("pt-BR");
             });
 
-            DomainServices(services);
-            InfraServices(services);
+            services.DomainServices();
+            services.InfraServices();
         }
 
-        private static void InfraServices(IServiceCollection services)
+        private static void InfraServices(this IServiceCollection services)
         {
             services.AddScoped<DomainEventsContext>();
             services.AddScoped<ISalarioRepository, SalarioRepository>();
@@ -33,7 +33,7 @@ namespace WebAppDomainEvents.CrossCutting
             services.AddScoped<IDespesaMensalRepositoryReadOnly, DespesaMensalRepositoryReadOnly>();
         }
 
-        private static void DomainServices(IServiceCollection services)
+        private static void DomainServices(this IServiceCollection services)
         {
             services.AddMediatR(Assembly.Load("WebAppDomainEvents.Domain"));
             services.AddScoped<INotificationHandler<DomainNotification>, DomainNotificationHandler>();
