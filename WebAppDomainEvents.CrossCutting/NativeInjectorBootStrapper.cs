@@ -14,7 +14,11 @@ namespace WebAppDomainEvents.CrossCutting
     {
         public static void RegisterServices(this IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(x => 
+            {
+                x.ReturnHttpNotAcceptable = true;
+                //x.RequireHttpsPermanent = true;
+            });
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new RequestCulture("pt-BR");
