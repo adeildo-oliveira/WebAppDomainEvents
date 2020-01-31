@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -65,9 +66,18 @@ namespace WebApi.DomainEvents
         public void Configure(IApplicationBuilder app)
         {
             if (_environment.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
+            //else
+            //{
+            //    app.UseExceptionHandler(appBuilder =>
+            //    {
+            //        appBuilder.Run(async context =>
+            //        {
+            //            context.Response.StatusCode = 500;
+            //            await context.Response.WriteAsync("Um erro inesperado oconteceu. Tente novamente mais tarde.");
+            //        });
+            //    });
+            //}
 
             app.UseCors("Local");
             app.UseForwardedHeaders(new ForwardedHeadersOptions
