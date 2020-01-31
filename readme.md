@@ -8,6 +8,29 @@ Este projeto tem como objetivo, exemplificar o uso do IMediator. Baseando-se nos
 ### [NuGet Mediator DependencyInjection](https://www.nuget.org/packages/MediatR.Extensions.Microsoft.DependencyInjection/)
 ``Install-Package MediatR.Extensions.Microsoft.DependencyInjection``
 
+>## Network
+
+Para facilitar a comunicação entre os container, vamos precisar criar uma rede e configura-los. Assim podemos comunicar os container através dos seus nomes.
+
+```
+docker network create --driver=bridge --subnet=172.28.0.0/16 --ip-range=172.28.5.0/24 --gateway=172.28.5.254 laboratorio
+```
+
+>## Logues MongoDB
+
+1. Imagem mongoDB:
+    ```
+    docker pull tutum/mongodb
+    ```
+2. Container:
+    ```
+    docker run -d -p 17017:27017 --name mongodb mongo
+    ```
+3. Rede:
+    ```
+    docker network connect laboratorio IdContainer --ip=172.28.5.1
+    ```
+
 >## Banco de Dados
 Para esse projeto, será preciso criar um banco de dados dentro do docker.
 
@@ -15,15 +38,18 @@ Para esse projeto, será preciso criar um banco de dados dentro do docker.
 
 * Logo abaixo segue alguns comandos. As configuraçõe de connnection string devem ser alteradas para a senha que for definida nos camando abaixo, bem como a porta que desejar configurar.
 
-```
-docker pull microsoft/mssql-server-linux:2017-latest
-```
-```
-docker run --name SQLServer2017 -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD={SENHA}" -e "MSSQL_PID=Developer" --cap-add SYS_PTRACE -p {PORTA EXTERNA}:{PORTA INTERNA} -d microsoft/mssql-server-linux:2017-latest
-```
-
-* Como exemplo, deixei um usuário já configurado na connection string, caso queira, pode ser usado o mesmo usuário quando for realizada as devidas configurações no SQL Server.
-
+1. Baixando a Imagem: 
+    ``` 
+    docker pull microsoft/mssql-server-linux:2017-latest
+    ```
+2. Definido o container e senha:
+    ``` 
+    docker run --name SQLServer2017 -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD={SENHA}" -e "MSSQL_PID=Developer" --cap-add SYS_PTRACE -p {PORTA EXTERNA}:{PORTA INTERNA} -d microsoft/mssql-server-linux:2017-latest 
+    ```
+3. Rede:
+    ```
+    docker network connect laboratorio IdContainer --ip=172.28.5.2
+    ```
 ### No projeto, entrando na pasta aonde está o arquivo **Dockerfile**, executar os comandos abaixo:
 
 1. Buid da imagem:
@@ -32,5 +58,9 @@ docker run --name SQLServer2017 -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD={SENHA}
     ```
 2. Criação do container a partir da imagem:
     ```
-    docker run -d -p 8080:80 --name api-events api-domainevents
+    docker run -d -p 8080:80 --name api-events api-domainevents 
+    ```
+3. Rede:
+    ```
+    docker network connect laboratorio IdContainer --ip=172.28.5.3
     ```
